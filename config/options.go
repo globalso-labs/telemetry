@@ -34,7 +34,7 @@ type genericOption struct {
 
 // ApplyOption applies the genericOption to the given Config instance.
 func (o *genericOption) ApplyOption(cfg *Config) {
-	o.fn(cfg.Metrics.Common())
+	o.fn(cfg.Meter.Common())
 	o.fn(cfg.Common())
 }
 

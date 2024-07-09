@@ -18,11 +18,17 @@
 
 package common
 
-import "go.globalso.dev/x/telemetry/internal"
+import (
+	"go.globalso.dev/x/telemetry/internal/constants"
+)
 
 func DefaultOptions() Common {
 	return Common{
-		OrganizationID: internal.DefaultOrganizationID,
-		OTLPEndpoint:   internal.TelemetryEndpoint,
+		ID:             constants.MachineID,
+		Name:           constants.ServiceName,
+		Namespace:      constants.ServiceNamespace,
+		Version:        constants.ServiceVersion,
+		OrganizationID: constants.DefaultOrganizationID,
+		OTLPEndpoint:   constants.TelemetryEndpoint,
 	}
 }

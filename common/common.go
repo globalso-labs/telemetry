@@ -21,6 +21,12 @@ package common
 // Common holds configuration settings for telemetry.
 // It includes the organization ID, OTLP endpoint, and OTLP path.
 type Common struct {
+	ID        string // ID is the unique identifier for the telemetry instance. Used to identify the running instance.
+	Name      string // Name is the name of the service or application. Used to identify the service or application.
+	Namespace string // Namespace is the name of the group of services. Used to group services or applications.
+	Version   string // Version is the version of the service. Used to identify the version of service.
+
 	OrganizationID string // OrganizationID is the unique identifier for the organization.
 	OTLPEndpoint   string // OTLPEndpoint is the endpoint for OpenTelemetry Protocol (OTLP) communication.
+
 }

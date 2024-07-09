@@ -22,15 +22,15 @@ import (
 	"time"
 
 	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/internal/constants"
 )
 
 var defaultOptions = MeterOptions{
 	common: common.DefaultOptions(),
 
 	Enabled:        true,
-	ReadInterval:   internal.DefaultMetricReadInterval,
-	ExportInterval: internal.DefaultMetricExportInterval,
+	ReadInterval:   constants.DefaultMetricReadInterval,
+	ExportInterval: constants.DefaultMetricExportInterval,
 }
 
 // MeterOptions holds configuration options for a meter.
@@ -59,13 +59,13 @@ func (o *meterOption) ApplyMeterOption(option *MeterOptions) {
 
 // newMeterOption creates a new meterOption with the specified function.
 // The function provided should define how to modify the MeterOptions instance.
-func newMeterOption(fn func(*MeterOptions)) MeterOption {
+func newMeterOption(fn func(*MeterOptions)) MeterOption { //nolint:ireturn // Used to create a MeterOption.
 	return &meterOption{fn: fn}
 }
 
 // WithCommonOptions returns a MeterOption that sets the configuration options of the meter.
 // This function is a convenient way to set the configuration options of the meter.
-func WithCommonOptions(opts common.Common) MeterOption {
+func WithCommonOptions(opts common.Common) MeterOption { //nolint:ireturn // Used to create a MeterOption.
 	return newMeterOption(func(o *MeterOptions) {
 		o.common = opts
 	})
@@ -73,7 +73,7 @@ func WithCommonOptions(opts common.Common) MeterOption {
 
 // WithEnabled returns a MeterOption that sets the enabled state of the meter.
 // This function is a convenient way to enable or disable the meter functionality.
-func WithEnabled(enabled bool) MeterOption {
+func WithEnabled(enabled bool) MeterOption { //nolint:ireturn // Used to create a MeterOption.
 	return newMeterOption(func(o *MeterOptions) {
 		o.Enabled = enabled
 	})
@@ -81,7 +81,7 @@ func WithEnabled(enabled bool) MeterOption {
 
 // WithReadInterval returns a MeterOption that sets the read interval of the meter.
 // This function is a convenient way to specify how often the meter reads data.
-func WithReadInterval(interval time.Duration) MeterOption {
+func WithReadInterval(interval time.Duration) MeterOption { //nolint:ireturn // Used to create a MeterOption.
 	return newMeterOption(func(o *MeterOptions) {
 		o.ReadInterval = interval
 	})

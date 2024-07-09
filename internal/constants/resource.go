@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * resource.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:36:10 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 00:47:06 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,40 +16,14 @@
  * or otherwise exploit this software.
  */
 
-package config
+package constants
 
-import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/metrics"
+import "github.com/denisbrodbeck/machineid"
+
+var MachineID, _ = machineid.ID()
+
+const (
+	ServiceNamespace = "telemetry"
+	ServiceName      = "internal"
+	ServiceVersion   = "v0.0.0-alpha.0"
 )
-
-// Config is the configuration all submodules share.
-type Config struct {
-	common common.Common
-
-	Enabled bool
-	Meter   metrics.Config
-}
-
-func (c *Config) Common() *common.Common {
-	return &c.common
-}
-
-func (c *Config) IsEnabled() bool {
-	return c.Enabled
-}
-
-func New(opts ...Option) Config {
-	c := Config{
-		common: common.DefaultOptions(),
-
-		Enabled: true,
-		Meter:   metrics.NewConfig(),
-	}
-
-	for _, opt := range opts {
-		opt.ApplyOption(&c)
-	}
-
-	return c
-}

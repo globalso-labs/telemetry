@@ -3,7 +3,7 @@
  * metrics_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 21:07:18 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 01:26:40 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -19,79 +19,35 @@
 package metrics_test
 
 import (
+	"context"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/metrics"
 )
 
-func Test_NewConfig(t *testing.T) {
+func Test_RegisterGlobal(t *testing.T) {
 	t.Parallel()
 
+	ctx := context.Background()
 	cfg := metrics.NewConfig()
-	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Common())
-	assert.NotNil(t, cfg.Options())
-	assert.True(t, cfg.IsEnabled())
 
+	metrics.Register(ctx, &cfg)
+	defer metrics.Shutdown(ctx)
 }
 
-func Test_NewConfigWithInternalOptions(t *testing.T) {
+func Test_NewMeter(t *testing.T) {
 	t.Parallel()
 
-	t.Run("enabled", func(t *testing.T) {
-		cfg := metrics.NewConfig(metrics.WithEnabled(true))
-		assert.NotNil(t, cfg)
-		assert.NotNil(t, cfg.Common())
-		assert.NotNil(t, cfg.Options())
-		assert.True(t, cfg.IsEnabled())
-	})
-
-	t.Run("disabled", func(t *testing.T) {
-		cfg := metrics.NewConfig(metrics.WithEnabled(false))
-		assert.NotNil(t, cfg)
-		assert.NotNil(t, cfg.Common())
-		assert.NotNil(t, cfg.Options())
-		assert.False(t, cfg.IsEnabled())
-	})
-
-	t.Run("read_interval", func(t *testing.T) {
-		cfg := metrics.NewConfig(metrics.WithReadInterval(10 * time.Second))
-		assert.NotNil(t, cfg)
-		assert.NotNil(t, cfg.Common())
-		assert.NotNil(t, cfg.Options())
-		assert.True(t, cfg.IsEnabled())
-		assert.Equal(t, 10*time.Second, cfg.Options().ReadInterval)
-	})
-}
-
-func Test_NewConfigWithCommonOptions(t *testing.T) {
-	t.Parallel()
-
-	opts := common.DefaultOptions()
-
+	ctx := context.Background()
 	cfg := metrics.NewConfig()
-	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Common())
-	assert.NotNil(t, cfg.Options())
-	assert.True(t, cfg.IsEnabled())
-	assert.Equal(t, &opts, cfg.Common())
 
-	opts.OrganizationID = "test"
-	cfg = metrics.NewConfig(metrics.WithCommonOptions(opts))
-	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Common())
-	assert.NotNil(t, cfg.Options())
-	assert.True(t, cfg.IsEnabled())
-	assert.Equal(t, &opts, cfg.Common())
+	m, err := metrics.NewMeter(ctx, &cfg)
+	defer m.Shutdown(ctx)
 
-	opts.OTLPEndpoint = "http://localhost:4317"
-	cfg = metrics.NewConfig(metrics.WithCommonOptions(opts))
-	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Common())
-	assert.NotNil(t, cfg.Options())
-	assert.True(t, cfg.IsEnabled())
-	assert.Equal(t, &opts, cfg.Common())
+	assert.Nil(t, err)
+	assert.NotNil(t, m)
+
+	err = m.Provider().ForceFlush(ctx)
+	assert.Nil(t, err)
 }

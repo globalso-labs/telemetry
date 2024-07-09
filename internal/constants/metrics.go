@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * metrics.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:36:10 -0500 by nick.
+ * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,40 +16,16 @@
  * or otherwise exploit this software.
  */
 
-package config
+package constants
 
-import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/metrics"
+import "time"
+
+const (
+	// DefaultMetricReadInterval is the default interval for reading metricsold.
+	// It is set to 5 seconds.
+	DefaultMetricReadInterval = 5 * time.Second
+
+	// DefaultMetricExportInterval is the default interval for exporting metricsold.
+	// It is set to 5 seconds.
+	DefaultMetricExportInterval = 5 * time.Second
 )
-
-// Config is the configuration all submodules share.
-type Config struct {
-	common common.Common
-
-	Enabled bool
-	Meter   metrics.Config
-}
-
-func (c *Config) Common() *common.Common {
-	return &c.common
-}
-
-func (c *Config) IsEnabled() bool {
-	return c.Enabled
-}
-
-func New(opts ...Option) Config {
-	c := Config{
-		common: common.DefaultOptions(),
-
-		Enabled: true,
-		Meter:   metrics.NewConfig(),
-	}
-
-	for _, opt := range opts {
-		opt.ApplyOption(&c)
-	}
-
-	return c
-}

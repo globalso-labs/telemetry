@@ -23,7 +23,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/internal/constants"
 )
 
 func Test_New(t *testing.T) {
@@ -32,8 +32,8 @@ func Test_New(t *testing.T) {
 	c := config.New()
 	assert.NotNil(t, c)
 	assert.True(t, c.IsEnabled())
-	assert.Equal(t, internal.TelemetryEndpoint, c.Common().OTLPEndpoint)
-	assert.Equal(t, internal.DefaultOrganizationID, c.Common().OrganizationID)
+	assert.Equal(t, constants.TelemetryEndpoint, c.Common().OTLPEndpoint)
+	assert.Equal(t, constants.DefaultOrganizationID, c.Common().OrganizationID)
 
 }
 
@@ -44,10 +44,10 @@ func Test_NewWithOrganizationID(t *testing.T) {
 	assert.NotNil(t, c)
 
 	assert.Equal(t, "test", c.Common().OrganizationID)
-	assert.Equal(t, "test", c.Metrics.Common().OrganizationID)
+	assert.Equal(t, "test", c.Meter.Common().OrganizationID)
 
-	assert.Equal(t, internal.TelemetryEndpoint, c.Common().OTLPEndpoint)
-	assert.Equal(t, internal.TelemetryEndpoint, c.Metrics.Common().OTLPEndpoint)
+	assert.Equal(t, constants.TelemetryEndpoint, c.Common().OTLPEndpoint)
+	assert.Equal(t, constants.TelemetryEndpoint, c.Meter.Common().OTLPEndpoint)
 }
 
 func Test_NewWithOTLPEndpoint(t *testing.T) {
@@ -56,9 +56,9 @@ func Test_NewWithOTLPEndpoint(t *testing.T) {
 	c := config.New(config.WithOTLPEndpoint("http://localhost:4317"))
 	assert.NotNil(t, c)
 
-	assert.Equal(t, internal.DefaultOrganizationID, c.Common().OrganizationID)
-	assert.Equal(t, internal.DefaultOrganizationID, c.Metrics.Common().OrganizationID)
+	assert.Equal(t, constants.DefaultOrganizationID, c.Common().OrganizationID)
+	assert.Equal(t, constants.DefaultOrganizationID, c.Meter.Common().OrganizationID)
 
 	assert.Equal(t, "http://localhost:4317", c.Common().OTLPEndpoint)
-	assert.Equal(t, "http://localhost:4317", c.Metrics.Common().OTLPEndpoint)
+	assert.Equal(t, "http://localhost:4317", c.Meter.Common().OTLPEndpoint)
 }
