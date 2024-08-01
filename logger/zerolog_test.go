@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * zerolog_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 15:31:22 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,42 @@
  * or otherwise exploit this software.
  */
 
-package config
+package logger_test
 
 import (
-	"go.globalso.dev/x/telemetry/common"
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
+	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
-}
+func Test_NewContext(t *testing.T) {
+	t.Parallel()
 
-type option struct {
-	fn func(*Config)
-}
+	main := context.Background()
 
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
+	t.Run("default", func(t *testing.T) {
+		expected := zerolog.DefaultContextLogger
+		assert.Equal(t, &expected, logger.Ctx(main))
 	})
-}
 
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
+	t.Run("with", func(t *testing.T) {
+		fields := map[string]interface{}{
+			"bool":   true,
+			"error":  nil,
+			"number": 0,
+			"string": "test",
 		}
-	})
-}
 
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
+		expected := zerolog.DefaultContextLogger.With().
+			Bool("bool", true).
+			Interface("error", nil).
+			Int("number", 0).
+			Str("string", "test").
+			Logger()
+		assert.Equal(t, &expected, logger.With(main, fields))
 	})
+
 }

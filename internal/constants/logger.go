@@ -1,9 +1,9 @@
 /*
  * telemetry
- * register.go
+ * logger.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.
+ * Last modified at Mon, 22 Jul 2024 16:20:42 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,14 +18,8 @@
 
 package constants
 
-import "time"
+import "go.globalso.dev/x/telemetry/logger/level"
 
 const (
-	// DefaultMetricReadInterval is the default interval for reading metrics.
-	// It is set to 5 seconds.
-	DefaultMetricReadInterval = 5 * time.Second
-
-	// DefaultMetricExportInterval is the default interval for exporting metrics.
-	// It is set to 5 seconds.
-	DefaultMetricExportInterval = 5 * time.Second
+	DefaultLoggerLevel = level.WarnLevel
 )

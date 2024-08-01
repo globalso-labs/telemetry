@@ -1,9 +1,9 @@
 /*
  * telemetry
- * metrics.go
+ * level.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 15:15:18 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,21 +16,22 @@
  * or otherwise exploit this software.
  */
 
-package metrics
+package level
 
-import (
-	"context"
+type Level int8
 
-	"go.opentelemetry.io/otel"
+const (
+	// DebugLevel logs are typically voluminous, and are usually disabled in production.
+	DebugLevel Level = iota
+	// InfoLevel is the default logging priority.
+	InfoLevel
+	// WarnLevel logs are more important than Info, but don't need individual human review.
+	WarnLevel
+	// ErrorLevel logs are high-priority. If an application is running smoothly, it shouldn't generate any error logs.
+	ErrorLevel
+	// FatalLevel logs a message, then calls os.Exit(1).
+	FatalLevel
+
+	// TraceLevel logs are typically voluminous, and are usually disabled in production.
+	TraceLevel Level = -1
 )
-
-var _provider = new(Meter)
-
-func Register(ctx context.Context, config *Config) {
-	_provider, _ = NewMeter(ctx, config)
-	otel.SetMeterProvider(_provider.provider)
-}
-
-func Shutdown(ctx context.Context) error {
-	return _provider.Shutdown(ctx)
-}

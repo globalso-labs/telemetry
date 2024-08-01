@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * options_generic.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Wed, 10 Jul 2024 00:23:06 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,29 @@
  * or otherwise exploit this software.
  */
 
-package config
+package zerolog
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
+	"strconv"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
-}
+var MaxPathNumber = 0
 
-type option struct {
-	fn func(*Config)
-}
-
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
+func countParentDirectories(filePath string, maxPath int) int {
+	parentsCounter := -1
+	for i := len(filePath) - 1; i > 0; i-- {
+		if filePath[i] == '/' {
+			parentsCounter++
 		}
-	})
+		if parentsCounter == maxPath {
+			return i + 1
+		}
+	}
+
+	return 0
 }
 
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+var CallerMarshalFunc = func(_ uintptr, file string, line int) string {
+	file = file[countParentDirectories(file, MaxPathNumber):]
+	return file + ":" + strconv.Itoa(line)
 }

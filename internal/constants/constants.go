@@ -22,7 +22,7 @@ const (
 	// TelemetryEndpoint is the endpoint for telemetry data.
 	TelemetryEndpoint = "telemetry.idbi.pe"
 
-	// TelemetryMetricsPath is the URL path for sending telemetry metricsold.
+	// TelemetryMetricsPath is the URL path for sending telemetry metrics.
 	TelemetryMetricsPath = "otlp/v1/metrics"
 
 	// TelemetryTracesPath is the URL path for sending telemetry traces.

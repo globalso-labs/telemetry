@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * register_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:52:12 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 01:26:40 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,36 +16,34 @@
  * or otherwise exploit this software.
  */
 
-package metrics
+package meter_test
 
-import "go.globalso.dev/x/telemetry/common"
+import (
+	"context"
+	"testing"
+	"time"
 
-var defaultConfig = Config{
-	opts: defaultOptions,
-}
+	"github.com/stretchr/testify/assert"
+	"go.globalso.dev/x/telemetry/common"
+	"go.globalso.dev/x/telemetry/meter"
+)
 
-type Config struct {
-	opts MeterOptions
-}
+func Test_SendMetrics(t *testing.T) {
+	t.Parallel()
 
-func (c *Config) IsEnabled() bool {
-	return c.opts.Enabled
-}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-func (c *Config) Common() *common.Common {
-	return &c.opts.common
-}
-
-func (c *Config) Options() *MeterOptions {
-	return &c.opts
-}
-
-func NewConfig(opts ...MeterOption) Config {
-	c := defaultConfig
-
-	for _, opt := range opts {
-		opt.ApplyMeterOption(&c.opts)
+	cOpts := []common.Option{
+		common.WithVersion("1.0.0"),
+		common.WithName("test"),
+		common.WithID("test"),
 	}
 
-	return c
+	cfg := meter.NewConfig(meter.WithCommonOptions(cOpts...))
+	err := meter.Register(ctx, &cfg)
+	assert.Nil(t, err)
+	defer meter.Shutdown(ctx)
+
+	<-ctx.Done()
 }

@@ -1,9 +1,9 @@
 /*
  * telemetry
- * metrics_test.go
+ * provider_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 01:26:40 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 02:19:18 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,38 +16,25 @@
  * or otherwise exploit this software.
  */
 
-package metrics_test
+package meter_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.globalso.dev/x/telemetry/metrics"
+	"go.globalso.dev/x/telemetry/meter"
 )
-
-func Test_RegisterGlobal(t *testing.T) {
-	t.Parallel()
-
-	ctx := context.Background()
-	cfg := metrics.NewConfig()
-
-	metrics.Register(ctx, &cfg)
-	defer metrics.Shutdown(ctx)
-}
 
 func Test_NewMeter(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	cfg := metrics.NewConfig()
-
-	m, err := metrics.NewMeter(ctx, &cfg)
+	cfg := meter.NewConfig()
+	m, err := meter.NewMeter(ctx, &cfg)
 	defer m.Shutdown(ctx)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, m)
-
-	err = m.Provider().ForceFlush(ctx)
-	assert.Nil(t, err)
+	assert.NotNil(t, m.Provider())
 }

@@ -19,15 +19,19 @@
 package internal
 
 import (
+	"go.globalso.dev/x/telemetry/common"
 	"go.opentelemetry.io/otel/sdk/resource"
 
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-// ServiceResource is the configuration for the service resource.
-var _serviceResource = resource.NewWithAttributes(semconv.SchemaURL, resource.Default().Attributes()...)
-
 // GetResource returns the service resource.
 func GetResource() *resource.Resource {
-	return _serviceResource
+	attrs := resource.Default().Attributes()
+	attrs = append(attrs, semconv.ServiceInstanceIDKey.String(common.ID()))
+	attrs = append(attrs, semconv.ServiceNameKey.String(common.Name()))
+	attrs = append(attrs, semconv.ServiceNamespaceKey.String(common.Namespace()))
+	attrs = append(attrs, semconv.ServiceVersionKey.String(common.Version()))
+
+	return resource.NewWithAttributes(semconv.SchemaURL, attrs...)
 }

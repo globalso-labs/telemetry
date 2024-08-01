@@ -11,11 +11,11 @@ var defaultHeaders = map[string]string{
 	constants.HeaderTracer: "OpenTelemetry",
 }
 
-func GetHeaders(cfg *common.Common) map[string]string {
+func GetHeaders() map[string]string {
 	var headers = make(map[string]string)
 	maps.Copy(headers, defaultHeaders)
 
-	headers[constants.HeaderScopeOrgID] = cfg.OrganizationID
+	headers[constants.HeaderScopeOrgID] = common.OrganizationID()
 
 	return headers
 }

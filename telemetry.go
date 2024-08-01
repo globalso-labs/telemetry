@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * telemetry.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 20:24:08 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,24 @@
  * or otherwise exploit this software.
  */
 
-package config
+package telemetry
 
 import (
-	"go.globalso.dev/x/telemetry/common"
+	"context"
+
+	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/meter"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
-}
+func Execute(ctx context.Context, cfg config.Config) {
+	if err := logger.Register(ctx, &cfg.Logger); err != nil {
+		logger.Ctx(ctx).Warn().Msg(err.Error())
+	}
+	logger.Ctx(ctx).Info().Msg("telemetry logger registered")
 
-type option struct {
-	fn func(*Config)
-}
-
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
-	})
-}
-
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+	if err := meter.Register(ctx, &cfg.Meter); err != nil {
+		logger.Ctx(ctx).Warn().Msg(err.Error())
+	}
+	logger.Ctx(ctx).Info().Msg("telemetry meter registered")
 }

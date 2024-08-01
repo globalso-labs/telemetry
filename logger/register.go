@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * register.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 01:45:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,37 @@
  * or otherwise exploit this software.
  */
 
-package config
+package logger
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
+	"context"
+
+	"go.globalso.dev/x/telemetry/logger/otlp"
+	internal "go.globalso.dev/x/telemetry/logger/zerolog"
+	"go.opentelemetry.io/otel/log/global"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
+var _handler = new(Logger)
+
+func Register(ctx context.Context, opts *Options) error {
+	p, err := NewLogger(ctx, opts)
+	if err != nil {
+		return err
+	}
+
+	global.SetLoggerProvider(p.provider)
+
+	writer := internal.WithCloser(opts.Writer, p.Close)
+	l := internal.DefaultContextLogger.
+		Output(writer).
+		Hook(otlp.Hook{}).
+		Level(internal.FromLevel(opts.Level))
+	internal.DefaultContextLogger = l
+
+	_handler = p
+	return nil
 }
 
-type option struct {
-	fn func(*Config)
-}
-
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
-	})
-}
-
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+func Shutdown(ctx context.Context) error {
+	return _handler.Shutdown(ctx)
 }
