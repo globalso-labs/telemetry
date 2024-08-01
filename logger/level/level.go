@@ -21,6 +21,10 @@ package level
 type Level int8
 
 const (
+	DefaultLoggerLevel = WarnLevel
+)
+
+const (
 	// DebugLevel logs are typically voluminous, and are usually disabled in production.
 	DebugLevel Level = iota
 	// InfoLevel is the default logging priority.

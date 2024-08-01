@@ -19,17 +19,39 @@
 package zerolog
 
 import (
+	"io"
+
 	"github.com/rs/zerolog"
-	"go.globalso.dev/x/telemetry/internal/constants"
 	"go.globalso.dev/x/telemetry/logger/level"
 )
 
+// DefaultContextLogger is the default logger instance configured with a console writer,
+// default logging level, timestamp, and caller information.
 var DefaultContextLogger = zerolog.New(NewConsoleWriter()).
-	Level(FromLevel(constants.DefaultLoggerLevel)).With().
+	Level(ConvertLevel(level.DefaultLoggerLevel)).With().
 	Timestamp().
+	Caller().
 	Logger()
 
-func FromLevel(l level.Level) zerolog.Level {
+// New creates a new zerolog.Logger instance with the provided writer.
+//
+// Parameters:
+// - w io.Writer: The writer to which the log output will be written.
+//
+// Returns:
+// - zerolog.Logger: A new logger instance.
+func New(w io.Writer) zerolog.Logger {
+	return zerolog.New(w)
+}
+
+// ConvertLevel converts a custom logging level to a zerolog.Level.
+//
+// Parameters:
+// - l level.Level: The custom logging level to convert.
+//
+// Returns:
+// - zerolog.Level: The corresponding zerolog logging level.
+func ConvertLevel(l level.Level) zerolog.Level {
 	switch l {
 	case level.TraceLevel:
 		return zerolog.TraceLevel
