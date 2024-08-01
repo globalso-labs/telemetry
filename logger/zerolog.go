@@ -44,7 +44,7 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 	return zerolog.Ctx(ctx)
 }
 
-// With adds fields to the zerolog.Logger in the provided context.
+// WithFields adds fields to the zerolog.Logger in the provided context.
 //
 // This function retrieves the zerolog.Logger from the context, adds the specified fields
 // to the logger's context, and returns the updated logger. It is useful for adding
@@ -56,7 +56,7 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 //
 // Returns:
 // - *zerolog.Logger: The updated logger with the added fields.
-func With(ctx context.Context, fields map[string]any) *zerolog.Logger {
+func WithFields(ctx context.Context, fields map[string]interface{}) *zerolog.Logger {
 	l := Ctx(ctx)
 	l.UpdateContext(func(c zerolog.Context) zerolog.Context {
 		return c.Fields(fields)

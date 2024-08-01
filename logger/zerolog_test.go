@@ -25,6 +25,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
+	"go.globalso.dev/x/telemetry/logger/level"
 	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
 
@@ -32,6 +33,10 @@ func Test_NewContext(t *testing.T) {
 	t.Parallel()
 
 	main := context.Background()
+	zerolog.DefaultContextLogger = zerolog.New(zerolog.NewConsoleWriter()).
+		Level(zerolog.ConvertLevel(level.TraceLevel)).With().
+		Timestamp().
+		Logger()
 
 	t.Run("default", func(t *testing.T) {
 		expected := new(bytes.Buffer)
@@ -63,7 +68,7 @@ func Test_NewContext(t *testing.T) {
 		l1.Log().Msg("with parameter")
 
 		actual := new(bytes.Buffer)
-		l2 := logger.With(main, fields).Output(actual)
+		l2 := logger.WithFields(main, fields).Output(actual)
 		l2.Log().Msg("with parameter")
 		assert.NotSame(t, &expected, logger.Ctx(main))
 		assert.Equal(t, expected.String(), actual.String())

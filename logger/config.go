@@ -20,13 +20,14 @@ package logger
 
 import (
 	"go.globalso.dev/x/telemetry/internal/constants"
+	"go.globalso.dev/x/telemetry/logger/level"
 	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
 
 var defaultOptions = Options{
 	Enabled:        true,
 	ExportInterval: constants.DefaultMetricExportInterval,
-	Level:          constants.DefaultLoggerLevel,
+	Level:          level.DefaultLoggerLevel,
 	Writer:         zerolog.NewConsoleWriter(),
 }
 
