@@ -19,6 +19,7 @@
 package logger_test
 
 import (
+	"bytes"
 	"context"
 	"testing"
 
@@ -33,9 +34,15 @@ func Test_NewContext(t *testing.T) {
 	main := context.Background()
 
 	t.Run("default", func(t *testing.T) {
-		expected := zerolog.DefaultContextLogger
+		expected := new(bytes.Buffer)
+		l1 := zerolog.DefaultContextLogger.Output(expected)
+		l1.Log().Msg("default parameter")
+
+		actual := new(bytes.Buffer)
+		l2 := logger.Ctx(main).Output(actual)
+		l2.Log().Msg("default parameter")
 		assert.NotSame(t, &expected, logger.Ctx(main))
-		assert.EqualValues(t, expected.With(), logger.Ctx(main).With())
+		assert.Equal(t, expected.String(), actual.String())
 	})
 
 	t.Run("with", func(t *testing.T) {
@@ -46,15 +53,20 @@ func Test_NewContext(t *testing.T) {
 			"string": "test",
 		}
 
-		expected := zerolog.DefaultContextLogger.With().
+		expected := new(bytes.Buffer)
+		l1 := zerolog.DefaultContextLogger.Output(expected).With().
 			Bool("bool", true).
 			Interface("error", nil).
 			Int("number", 0).
 			Str("string", "test").
 			Logger()
+		l1.Log().Msg("with parameter")
 
+		actual := new(bytes.Buffer)
+		l2 := logger.With(main, fields).Output(actual)
+		l2.Log().Msg("with parameter")
 		assert.NotSame(t, &expected, logger.Ctx(main))
-		assert.EqualValues(t, expected.With(), logger.With(main, fields).With())
+		assert.Equal(t, expected.String(), actual.String())
 	})
 
 }

@@ -27,7 +27,6 @@ import (
 var DefaultContextLogger = zerolog.New(NewConsoleWriter()).
 	Level(FromLevel(constants.DefaultLoggerLevel)).With().
 	Timestamp().
-	Caller().
 	Logger()
 
 func FromLevel(l level.Level) zerolog.Level {
