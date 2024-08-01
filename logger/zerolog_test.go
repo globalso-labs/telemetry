@@ -35,7 +35,7 @@ func Test_NewContext(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		expected := zerolog.DefaultContextLogger
 		assert.NotSame(t, &expected, logger.Ctx(main))
-		assert.EqualValues(t, expected, *logger.Ctx(main))
+		assert.EqualValues(t, expected.With(), logger.Ctx(main).With())
 	})
 
 	t.Run("with", func(t *testing.T) {
@@ -54,7 +54,7 @@ func Test_NewContext(t *testing.T) {
 			Logger()
 
 		assert.NotSame(t, &expected, logger.Ctx(main))
-		assert.EqualValues(t, expected, *logger.With(main, fields))
+		assert.EqualValues(t, expected.With(), logger.With(main, fields).With())
 	})
 
 }
