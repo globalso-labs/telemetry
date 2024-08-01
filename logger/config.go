@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * config.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Mon, 8 Jul 2024 20:52:12 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,30 @@
  * or otherwise exploit this software.
  */
 
-package config
+package logger
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
+	"go.globalso.dev/x/telemetry/internal/constants"
+	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
+var defaultOptions = Options{
+	Enabled:        true,
+	ExportInterval: constants.DefaultMetricExportInterval,
+	Level:          constants.DefaultLoggerLevel,
+	Writer:         zerolog.NewConsoleWriter(),
 }
 
-type option struct {
-	fn func(*Config)
+func (c *Options) IsEnabled() bool {
+	return c.Enabled
 }
 
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
+func NewConfig(opts ...Option) Options {
+	c := defaultOptions
 
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
+	for _, opt := range opts {
+		opt.ApplyLoggerOption(&c)
+	}
 
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
-	})
-}
-
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+	return c
 }

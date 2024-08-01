@@ -1,9 +1,9 @@
 /*
  * telemetry
- * telemetry_test.go
+ * register_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:30:53 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 15:22:38 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package telemetry_test
+package logger_test
 
 import (
 	"context"
@@ -25,33 +25,25 @@ import (
 	"testing"
 	"time"
 
-	"go.globalso.dev/x/telemetry"
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/config"
+	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/logger/level"
 )
 
-func Test_Telemetry(t *testing.T) {
+func Test_SendLogs(t *testing.T) {
 	t.Parallel()
 
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	lOpts := []logger.Option{
+	opts := []logger.Option{
 		logger.WithLevel(level.TraceLevel),
 		logger.WithWriter(io.Discard),
 	}
-
-	cOpts := []common.Option{
-		common.WithVersion("1.0.0"),
-	}
-	cfg := config.New(
-		config.WithLoggerOpts(lOpts...),
-		config.WithCommonOpts(cOpts...),
-	)
-	telemetry.Execute(ctx, cfg)
+	cfg := logger.NewConfig(opts...)
+	err := logger.Register(ctx, &cfg)
+	assert.Nil(t, err)
+	defer logger.Shutdown(ctx)
 
 	// We aren't testing the Fatal level here, since the test will exit after the first call to Fatal.
 	for {

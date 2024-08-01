@@ -58,7 +58,7 @@ To use the logs module with zerolog, import the package and initialize the logge
 
 ```golang
 import (
-    "go.globalso.dev/x/telemetry/logs"
+    "go.globalso.dev/x/telemetry/logger"
     "github.com/rs/zerolog/log"
 )
 

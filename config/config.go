@@ -19,20 +19,15 @@
 package config
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/metrics"
+	"go.globalso.dev/x/telemetry/logger"
+	"go.globalso.dev/x/telemetry/meter"
 )
 
 // Config is the configuration all submodules share.
 type Config struct {
-	common common.Common
-
 	Enabled bool
-	Metrics metrics.Config
-}
-
-func (c *Config) Common() *common.Common {
-	return &c.common
+	Meter   meter.Options
+	Logger  logger.Options
 }
 
 func (c *Config) IsEnabled() bool {
@@ -41,14 +36,13 @@ func (c *Config) IsEnabled() bool {
 
 func New(opts ...Option) Config {
 	c := Config{
-		common: common.DefaultOptions(),
-
 		Enabled: true,
-		Metrics: metrics.NewConfig(),
+		Meter:   meter.NewConfig(),
+		Logger:  logger.NewConfig(),
 	}
 
 	for _, opt := range opts {
-		opt.ApplyOption(&c)
+		opt.Apply(&c)
 	}
 
 	return c

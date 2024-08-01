@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * global.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:52:12 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 15:49:42 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,36 +16,33 @@
  * or otherwise exploit this software.
  */
 
-package metrics
+package zerolog
 
-import "go.globalso.dev/x/telemetry/common"
+import (
+	"github.com/rs/zerolog"
+	"go.globalso.dev/x/telemetry/internal/constants"
+	"go.globalso.dev/x/telemetry/logger/level"
+)
 
-var defaultConfig = Config{
-	opts: defaultOptions,
-}
+var DefaultContextLogger = zerolog.New(NewConsoleWriter()).
+	Level(FromLevel(constants.DefaultLoggerLevel)).With().
+	Timestamp().
+	Logger()
 
-type Config struct {
-	opts MeterOptions
-}
-
-func (c *Config) IsEnabled() bool {
-	return c.opts.Enabled
-}
-
-func (c *Config) Common() *common.Common {
-	return &c.opts.common
-}
-
-func (c *Config) Options() *MeterOptions {
-	return &c.opts
-}
-
-func NewConfig(opts ...MeterOption) Config {
-	c := defaultConfig
-
-	for _, opt := range opts {
-		opt.ApplyMeterOption(&c.opts)
+func FromLevel(l level.Level) zerolog.Level {
+	switch l {
+	case level.TraceLevel:
+		return zerolog.TraceLevel
+	case level.DebugLevel:
+		return zerolog.DebugLevel
+	case level.InfoLevel:
+		return zerolog.InfoLevel
+	case level.WarnLevel:
+		return zerolog.WarnLevel
+	case level.ErrorLevel:
+		return zerolog.ErrorLevel
+	case level.FatalLevel:
+		return zerolog.FatalLevel
 	}
-
-	return c
+	return zerolog.NoLevel
 }

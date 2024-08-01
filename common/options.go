@@ -1,6 +1,6 @@
 /*
  * telemetry
- * options.go
+ * options_generic.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
  * Last modified at Mon, 8 Jul 2024 21:03:37 -0500 by nick.
@@ -18,11 +18,70 @@
 
 package common
 
-import "go.globalso.dev/x/telemetry/internal"
+import (
+	"go.globalso.dev/x/telemetry/internal/constants"
+)
 
-func DefaultOptions() Common {
-	return Common{
-		OrganizationID: internal.DefaultOrganizationID,
-		OTLPEndpoint:   internal.TelemetryEndpoint,
-	}
+var defaultOptions = Common{
+	id:             constants.MachineID,
+	name:           constants.ServiceName,
+	namespace:      constants.ServiceNamespace,
+	version:        constants.ServiceVersion,
+	organizationID: constants.DefaultOrganizationID,
+	otlpEndpoint:   constants.TelemetryEndpoint,
+}
+
+var Options = defaultOptions
+
+// Option defines an interface for applying meter options.
+type Option interface {
+	Apply(common *Common)
+}
+
+type option struct {
+	fn func(*Common)
+}
+
+func (o *option) Apply(common *Common) {
+	o.fn(common)
+}
+
+func newOption(fn func(*Common)) Option { //nolint:ireturn
+	return &option{fn: fn}
+}
+
+func WithID(id string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.id = id
+	})
+}
+
+func WithName(name string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.name = name
+	})
+}
+
+func WithNamespace(namespace string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.namespace = namespace
+	})
+}
+
+func WithVersion(version string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.version = version
+	})
+}
+
+func WithOrganizationID(organizationID string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.organizationID = organizationID
+	})
+}
+
+func WithOTLPEndpoint(endpoint string) Option { //nolint:ireturn
+	return newOption(func(o *Common) {
+		o.otlpEndpoint = endpoint
+	})
 }

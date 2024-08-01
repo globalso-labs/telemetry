@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * resource.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 00:25:06 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,22 @@
  * or otherwise exploit this software.
  */
 
-package config
+package internal
 
 import (
 	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
+	"go.opentelemetry.io/otel/sdk/resource"
+
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
-}
+// GetResource returns the service resource.
+func GetResource() *resource.Resource {
+	attrs := resource.Default().Attributes()
+	attrs = append(attrs, semconv.ServiceInstanceIDKey.String(common.ID()))
+	attrs = append(attrs, semconv.ServiceNameKey.String(common.Name()))
+	attrs = append(attrs, semconv.ServiceNamespaceKey.String(common.Namespace()))
+	attrs = append(attrs, semconv.ServiceVersionKey.String(common.Version()))
 
-type option struct {
-	fn func(*Config)
-}
-
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
-	})
-}
-
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+	return resource.NewWithAttributes(semconv.SchemaURL, attrs...)
 }

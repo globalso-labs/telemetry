@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options.go
+ * provider_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 20:52:02 -0500 by nick.
+ * Last modified at Tue, 9 Jul 2024 02:19:18 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,51 +16,25 @@
  * or otherwise exploit this software.
  */
 
-package config
+package meter_test
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.globalso.dev/x/telemetry/logger"
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/meter"
 )
 
-// Option interface with methods to apply options.
-type Option interface {
-	Apply(*Config)
-}
+func Test_NewMeter(t *testing.T) {
+	t.Parallel()
 
-type option struct {
-	fn func(*Config)
-}
+	ctx := context.Background()
+	cfg := meter.NewConfig()
+	m, err := meter.NewMeter(ctx, &cfg)
+	defer m.Shutdown(ctx)
 
-func (o *option) Apply(cfg *Config) {
-	o.fn(cfg)
-}
-
-func newOption(fn func(*Config)) Option { //nolint:ireturn
-	return &option{fn: fn}
-}
-
-func WithLoggerOpts(opts ...logger.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyLoggerOption(&t.Logger)
-		}
-	})
-}
-
-func WithMeterOpts(opts ...meter.Option) Option { //nolint:ireturn
-	return newOption(func(t *Config) {
-		for _, opt := range opts {
-			opt.ApplyOption(&t.Meter)
-		}
-	})
-}
-
-func WithCommonOpts(opts ...common.Option) Option { //nolint:ireturn
-	return newOption(func(_ *Config) {
-		for _, opt := range opts {
-			opt.Apply(&common.Options)
-		}
-	})
+	assert.Nil(t, err)
+	assert.NotNil(t, m)
+	assert.NotNil(t, m.Provider())
 }
