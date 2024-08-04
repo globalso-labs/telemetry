@@ -17,3 +17,18 @@
  */
 
 package zerolog
+
+import "io"
+
+type closerWriter struct {
+	io.Writer
+	closer func() error
+}
+
+func (w closerWriter) Close() error {
+	return w.closer()
+}
+
+func WithCloser(writer io.Writer, closer func() error) io.WriteCloser {
+	return closerWriter{Writer: writer, closer: closer}
+}

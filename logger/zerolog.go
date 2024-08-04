@@ -30,20 +30,6 @@ func init() { //nolint: gochecknoinits // This is the only way to set the defaul
 	zerolog.CallerMarshalFunc = internal.CallerMarshalFunc
 }
 
-// Ctx retrieves the zerolog.Logger from the provided context.
-//
-// This function extracts the zerolog.Logger instance associated with the given context.
-// It is useful for logging within the context of a request or operation.
-//
-// Parameters:
-// - ctx context.Context: The context from which to retrieve the logger.
-//
-// Returns:
-// - *zerolog.Logger: The logger associated with the context.
-func Ctx(ctx context.Context) *zerolog.Logger {
-	return zerolog.Ctx(ctx)
-}
-
 // WithFields adds fields to the zerolog.Logger in the provided context.
 //
 // This function retrieves the zerolog.Logger from the context, adds the specified fields
@@ -65,28 +51,33 @@ func WithFields(ctx context.Context, fields map[string]interface{}) *zerolog.Log
 	return l
 }
 
-// Log logs a no-level message using the zerolog.Logger from the provided context.
+// Ctx retrieves the zerolog.Logger from the provided context.
+func Ctx(ctx context.Context) *zerolog.Logger {
+	return zerolog.Ctx(ctx)
+}
+
+// Log logs a no-constants message using the zerolog.Logger from the provided context.
 func Log() *zerolog.Event {
 	return internal.DefaultContextLogger.Log()
 }
 
-// Trace logs a trace level message using the zerolog.Logger from the provided context.
+// Trace logs a trace constants message using the zerolog.Logger from the provided context.
 func Trace() *zerolog.Event { return internal.DefaultContextLogger.Trace() }
 
-// Debug logs a debug level message using the zerolog.Logger from the provided context.
+// Debug logs a debug constants message using the zerolog.Logger from the provided context.
 func Debug() *zerolog.Event { return internal.DefaultContextLogger.Debug() }
 
-// Info logs an info level message using the zerolog.Logger from the provided context.
+// Info logs an info constants message using the zerolog.Logger from the provided context.
 func Info() *zerolog.Event { return internal.DefaultContextLogger.Info() }
 
-// Warn logs a warn level message using the zerolog.Logger from the provided context.
+// Warn logs a warn constants message using the zerolog.Logger from the provided context.
 func Warn() *zerolog.Event { return internal.DefaultContextLogger.Warn() }
 
-// Error logs an error level message using the zerolog.Logger from the provided context.
+// Error logs an error constants message using the zerolog.Logger from the provided context.
 func Error() *zerolog.Event { return internal.DefaultContextLogger.Error() }
 
-// Fatal logs a fatal level message using the zerolog.Logger from the provided context.
+// Fatal logs a fatal constants message using the zerolog.Logger from the provided context.
 func Fatal() *zerolog.Event { return internal.DefaultContextLogger.Fatal() }
 
-// Panic logs a panic level message using the zerolog.Logger from the provided context.
+// Panic logs a panic constants message using the zerolog.Logger from the provided context.
 func Panic() *zerolog.Event { return internal.DefaultContextLogger.Panic() }

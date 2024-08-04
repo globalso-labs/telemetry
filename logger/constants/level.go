@@ -1,6 +1,6 @@
 /*
  * telemetry
- * level.go
+ * exporter.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
  * Last modified at Wed, 31 Jul 2024 15:15:18 -0500 by nick.
@@ -16,26 +16,10 @@
  * or otherwise exploit this software.
  */
 
-package level
+package constants
 
-type Level int8
-
-const (
-	DefaultLoggerLevel = WarnLevel
-)
+import "github.com/rs/zerolog"
 
 const (
-	// DebugLevel logs are typically voluminous, and are usually disabled in production.
-	DebugLevel Level = iota
-	// InfoLevel is the default logging priority.
-	InfoLevel
-	// WarnLevel logs are more important than Info, but don't need individual human review.
-	WarnLevel
-	// ErrorLevel logs are high-priority. If an application is running smoothly, it shouldn't generate any error logs.
-	ErrorLevel
-	// FatalLevel logs a message, then calls os.Exit(1).
-	FatalLevel
-
-	// TraceLevel logs are typically voluminous, and are usually disabled in production.
-	TraceLevel Level = -1
+	DefaultLoggerLevel = zerolog.WarnLevel
 )

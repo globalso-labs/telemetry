@@ -22,7 +22,9 @@ import (
 	"io"
 	"time"
 
-	"go.globalso.dev/x/telemetry/logger/level"
+	"github.com/rs/zerolog"
+	"go.globalso.dev/x/telemetry/common"
+	"go.globalso.dev/x/telemetry/logger/constants"
 )
 
 // Options holds configuration options for a meter.
@@ -30,7 +32,7 @@ type Options struct {
 	Enabled bool // Enabled specifies whether the meter is enabled.
 
 	ExportInterval time.Duration // ExportInterval specifies the interval at which the meter exports data.
-	Level          level.Level   // Level specifies the log level of the meter.
+	Level          zerolog.Level // Level specifies the log constants of the meter.
 
 	Writer io.Writer // Writer specifies the writer to write logs to.
 }
@@ -56,11 +58,23 @@ func newLoggerOption(fn func(*Options)) Option { //nolint:ireturn
 	return &loggerOption{fn: fn}
 }
 
-// WithLevel returns an Option that sets the log level of the meter.
-// This function is a convenient way to specify the log level for the meter.
-func WithLevel(l level.Level) Option { //nolint:ireturn
+// WithLevel returns an Option that sets the log constants of the meter.
+// This function is a convenient way to specify the log level of the meter.
+func WithLevel(l zerolog.Level) Option { //nolint:ireturn
 	return newLoggerOption(func(o *Options) {
 		o.Level = l
+	})
+}
+
+// WithVerbosity returns an Option that sets the log constants of the meter based on verbosity.
+// This function is a convenient way to specify the log level of the meter based on verbosity.
+func WithVerbosity(verbosity int) Option { //nolint:ireturn
+	return newLoggerOption(func(o *Options) {
+		vLevel := constants.DefaultLoggerLevel - zerolog.Level(verbosity)
+		if verbosity < int(zerolog.TraceLevel) {
+			vLevel = zerolog.TraceLevel
+		}
+		o.Level = vLevel
 	})
 }
 
@@ -88,10 +102,12 @@ func WithExportInterval(interval time.Duration) Option { //nolint:ireturn
 	})
 }
 
-func WithCommonOptions(opts ...Option) Option { //nolint:ireturn
-	return newLoggerOption(func(o *Options) {
+// WithCommonOptions returns an Option that applies common options to the meter.
+// This function is a convenient way to apply common options to the meter.
+func WithCommonOptions(opts ...common.Option) Option { //nolint:ireturn
+	return newLoggerOption(func(_ *Options) {
 		for _, opt := range opts {
-			opt.ApplyLoggerOption(o)
+			opt.Apply(&common.Options)
 		}
 	})
 }

@@ -40,7 +40,7 @@ func Register(ctx context.Context, opts *Options) error {
 	l := internal.DefaultContextLogger.
 		Output(writer).
 		Hook(otlp.Hook{}).
-		Level(internal.ConvertLevel(opts.Level))
+		Level(opts.Level)
 	internal.DefaultContextLogger = l
 
 	_handler = p
