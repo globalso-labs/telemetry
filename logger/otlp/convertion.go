@@ -12,13 +12,13 @@ import (
 
 // convertEvent transforms a zerolog event into an OpenTelemetry log record.
 //
-// This function takes a zerolog event, its level, and a message string as inputs.
+// This function takes a zerolog event, its constants, and a message string as inputs.
 // It constructs an OpenTelemetry log record by setting the timestamp, message body,
-// severity level, observed timestamp, and any additional attributes extracted from the event.
+// severity constants, observed timestamp, and any additional attributes extracted from the event.
 //
 // Parameters:
 // - e *zerolog.Event: The zerolog event to be converted.
-// - level zerolog.Level: The logging level of the event.
+// - constants zerolog.Level: The logging constants of the event.
 // - msg string: The log message.
 //
 // Returns:
@@ -27,13 +27,13 @@ func (h Hook) convertEvent(e *zerolog.Event, level zerolog.Level, msg string) lo
 	var record log.Record
 	record.SetTimestamp(time.Now().UTC())      // Set the timestamp using zerolog's configured function.
 	record.SetBody(log.StringValue(msg))       // Set the log message body.
-	record.SetSeverity(convertSeverity(level)) // Convert and set the severity level based on zerolog's level.
-	record.SetSeverityText(level.String())     // Set the severity text using zerolog's level string.
+	record.SetSeverity(convertSeverity(level)) // Convert and set the severity constants based on zerolog's constants.
+	record.SetSeverityText(level.String())     // Set the severity text using zerolog's constants string.
 	record.AddAttributes(convertFields(e)...)  // Convert and add any additional fields  attributes.
 	return record
 }
 
-// convertSeverity converts a zerolog logging level to an OpenTelemetry log severity.
+// convertSeverity converts a zerolog logging constants to an OpenTelemetry log severity.
 //
 // This function maps zerolog's logging levels to OpenTelemetry's log severity levels.
 // It ensures that logs are categorized correctly in the OpenTelemetry ecosystem
@@ -42,10 +42,10 @@ func (h Hook) convertEvent(e *zerolog.Event, level zerolog.Level, msg string) lo
 // as they do not have direct equivalents.
 //
 // Parameters:
-// - level zerolog.Level: The zerolog logging level to be converted.
+// - constants zerolog.Level: The zerolog logging constants to be converted.
 //
 // Returns:
-// - log.Severity: The corresponding OpenTelemetry log severity level.
+// - log.Severity: The corresponding OpenTelemetry log severity constants.
 func convertSeverity(level zerolog.Level) log.Severity {
 	switch level {
 	case zerolog.TraceLevel:

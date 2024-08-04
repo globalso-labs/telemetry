@@ -32,11 +32,11 @@ type Hook struct{}
 //
 // Parameters:
 // - event: The zerolog event that contains all the log information.
-// - level: The logging level of the event (e.g., Info, Warn, Error).
+// - constants: The logging constants of the event (e.g., Info, Warn, Error).
 // - message: The log message.
 //
 // The method extracts the context from the event, converts the event to an OpenTelemetry log record,
-// and emits the record using the global logger provider. If the log level is PanicLevel or FatalLevel,
+// and emits the record using the global logger provider. If the log constants is PanicLevel or FatalLevel,
 // it shuts down the logger provider to ensure all logs are flushed before the application exits.
 func (h Hook) Run(event *zerolog.Event, level zerolog.Level, message string) {
 	ctx := event.GetCtx()

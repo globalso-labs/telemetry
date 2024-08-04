@@ -3,7 +3,7 @@
  * exporter.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.
+ * Last modified at Wed, 31 Jul 2024 15:15:18 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,16 +18,8 @@
 
 package constants
 
+import "github.com/rs/zerolog"
+
 const (
-	// TelemetryEndpoint is the endpoint for telemetry data.
-	TelemetryEndpoint = "telemetry.idbi.pe"
-
-	// TelemetryMetricsPath is the URL path for sending telemetry metrics.
-	TelemetryMetricsPath = "otlp/v1/metrics"
-
-	// TelemetryTracesPath is the URL path for sending telemetry traces.
-	TelemetryTracesPath = "otlp/v1/traces"
-
-	// TelemetryLogsPath is the URL path for sending telemetry logs.
-	TelemetryLogsPath = "otlp/v1/logs"
+	DefaultLoggerLevel = zerolog.WarnLevel
 )

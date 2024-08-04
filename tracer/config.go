@@ -1,9 +1,9 @@
 /*
  * telemetry
- * level.go
+ * config.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 15:15:18 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 02:21:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,26 +16,22 @@
  * or otherwise exploit this software.
  */
 
-package level
+package tracer
 
-type Level int8
+var defaultOptions = Options{
+	Enabled: true,
+}
 
-const (
-	DefaultLoggerLevel = WarnLevel
-)
+func (c *Options) IsEnabled() bool {
+	return c.Enabled
+}
 
-const (
-	// DebugLevel logs are typically voluminous, and are usually disabled in production.
-	DebugLevel Level = iota
-	// InfoLevel is the default logging priority.
-	InfoLevel
-	// WarnLevel logs are more important than Info, but don't need individual human review.
-	WarnLevel
-	// ErrorLevel logs are high-priority. If an application is running smoothly, it shouldn't generate any error logs.
-	ErrorLevel
-	// FatalLevel logs a message, then calls os.Exit(1).
-	FatalLevel
+func NewConfig(opts ...Option) Options {
+	c := defaultOptions
 
-	// TraceLevel logs are typically voluminous, and are usually disabled in production.
-	TraceLevel Level = -1
-)
+	for _, opt := range opts {
+		opt.ApplyOption(&c)
+	}
+
+	return c
+}

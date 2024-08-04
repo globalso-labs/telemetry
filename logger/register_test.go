@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/logger/level"
 )
 
 func Test_SendLogs(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_SendLogs(t *testing.T) {
 	defer cancel()
 
 	opts := []logger.Option{
-		logger.WithLevel(level.TraceLevel),
+		logger.WithLevel(zerolog.TraceLevel),
 		logger.WithWriter(io.Discard),
 	}
 	cfg := logger.NewConfig(opts...)
@@ -45,7 +45,7 @@ func Test_SendLogs(t *testing.T) {
 	assert.Nil(t, err)
 	defer logger.Shutdown(ctx)
 
-	// We aren't testing the Fatal level here, since the test will exit after the first call to Fatal.
+	// We aren't testing the Fatal constants here, since the test will exit after the first call to Fatal.
 	for {
 		select {
 		case <-ctx.Done():

@@ -1,9 +1,9 @@
 /*
  * telemetry
- * exporter.go
+ * closer.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 00:44:15 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,18 +16,19 @@
  * or otherwise exploit this software.
  */
 
-package constants
+package zerolog
 
-const (
-	// TelemetryEndpoint is the endpoint for telemetry data.
-	TelemetryEndpoint = "telemetry.idbi.pe"
+import "io"
 
-	// TelemetryMetricsPath is the URL path for sending telemetry metrics.
-	TelemetryMetricsPath = "otlp/v1/metrics"
+type closerWriter struct {
+	io.Writer
+	closer func() error
+}
 
-	// TelemetryTracesPath is the URL path for sending telemetry traces.
-	TelemetryTracesPath = "otlp/v1/traces"
+func (w closerWriter) Close() error {
+	return w.closer()
+}
 
-	// TelemetryLogsPath is the URL path for sending telemetry logs.
-	TelemetryLogsPath = "otlp/v1/logs"
-)
+func WithCloser(writer io.Writer, closer func() error) io.WriteCloser {
+	return closerWriter{Writer: writer, closer: closer}
+}
