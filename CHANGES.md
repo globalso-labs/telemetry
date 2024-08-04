@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/globalso-labs/telemetry/compare/v0.2.0...v0.3.0) (2024-08-04)
+
+
+### Features
+
+* add tracer implementation ([c377b5a](https://github.com/globalso-labs/telemetry/commit/c377b5aa9db9b4a93ff37b0beb38684eb1e18dc8))
+* update logger to use zerolog levels ([9fc556c](https://github.com/globalso-labs/telemetry/commit/9fc556ced0bf5a8b37d5cc06fd9c4f323538449d))
+
+
+### Miscellaneous Chores
+
+* release 0.3.0 ([934ddac](https://github.com/globalso-labs/telemetry/commit/934ddaccc3283570336f3a0c2c846eb33146658b))
+
 ## [0.2.0](https://github.com/globalso-labs/telemetry/compare/v0.1.0...v0.2.0) (2024-08-01)
 
 
