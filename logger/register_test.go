@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/logger/constants"
 )
 
 func Test_SendLogs(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_SendLogs(t *testing.T) {
 	defer cancel()
 
 	opts := []logger.Option{
-		logger.WithLevel(constants.TraceLevel),
+		logger.WithLevel(zerolog.TraceLevel),
 		logger.WithWriter(io.Discard),
 	}
 	cfg := logger.NewConfig(opts...)

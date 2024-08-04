@@ -25,11 +25,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"go.globalso.dev/x/telemetry"
 	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/logger/constants"
 )
 
 func Test_Telemetry(t *testing.T) {
@@ -40,7 +40,7 @@ func Test_Telemetry(t *testing.T) {
 	defer cancel()
 
 	lOpts := []logger.Option{
-		logger.WithLevel(constants.TraceLevel),
+		logger.WithLevel(zerolog.TraceLevel),
 		logger.WithWriter(io.Discard),
 	}
 

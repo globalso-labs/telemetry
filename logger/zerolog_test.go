@@ -23,9 +23,9 @@ import (
 	"context"
 	"testing"
 
+	level "github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/logger/constants"
 	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
 
@@ -34,7 +34,7 @@ func Test_NewContext(t *testing.T) {
 
 	main := context.Background()
 	zerolog.DefaultContextLogger = zerolog.New(zerolog.NewConsoleWriter()).
-		Level(zerolog.ConvertLevel(constants.TraceLevel)).With().
+		Level(level.TraceLevel).With().
 		Timestamp().
 		Logger()
 
