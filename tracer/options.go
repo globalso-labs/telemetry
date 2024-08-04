@@ -1,9 +1,9 @@
 /*
  * telemetry
- * options_generic.go
+ * options.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:53:15 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 00:07:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,19 +16,15 @@
  * or otherwise exploit this software.
  */
 
-package meter
+package tracer
 
 import (
-	"time"
-
 	"go.globalso.dev/x/telemetry/common"
 )
 
 // Options holds configuration options for a meter.
 type Options struct {
-	Enabled        bool          // Enabled specifies whether the meter is enabled.
-	ReadInterval   time.Duration // ReadInterval specifies the interval at which the meter reads data.
-	ExportInterval time.Duration // ExportInterval specifies the interval at which the meter exports data.
+	Enabled bool // Enabled specifies whether the meter is enabled.
 }
 
 // Option defines an interface for applying meter options.
@@ -61,11 +57,5 @@ func WithCommonOptions(opts ...common.Option) Option { //nolint:ireturn
 func WithEnabled(enabled bool) Option { //nolint:ireturn
 	return newMeterOption(func(o *Options) {
 		o.Enabled = enabled
-	})
-}
-
-func WithReadInterval(interval time.Duration) Option { //nolint:ireturn
-	return newMeterOption(func(o *Options) {
-		o.ReadInterval = interval
 	})
 }

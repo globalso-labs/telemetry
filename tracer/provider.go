@@ -3,7 +3,7 @@
  * provider.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 01:43:07 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 02:21:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -17,3 +17,84 @@
  */
 
 package tracer
+
+import (
+	"context"
+	"fmt"
+
+	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/internal/constants"
+	"go.globalso.dev/x/telemetry/pkg/errors"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/sdk/trace"
+)
+
+type Tracer struct {
+	provider  *trace.TracerProvider
+	processor trace.SpanProcessor
+	exporter  trace.SpanExporter
+}
+
+func NewTracer(ctx context.Context, config *Options) (*Tracer, error) {
+	if !config.IsEnabled() {
+		return nil, errors.ErrTelemetryTracesNotEnabled
+	}
+
+	tracer := new(Tracer)
+
+	// Create the exporter.
+	exporter, err := newHTTPExporter(ctx, config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
+	}
+	tracer.exporter = exporter
+
+	// Create the processor.
+	tracer.processor = newProcessor(exporter)
+
+	// Create the tracer provider.
+	tracer.provider = newProvider(tracer.processor)
+
+	return tracer, nil
+}
+
+func (t Tracer) Provider() *trace.TracerProvider {
+	return t.provider
+}
+
+func (t Tracer) Shutdown(ctx context.Context) error {
+	if err := t.provider.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	if err := t.processor.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	if err := t.exporter.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func newHTTPExporter(ctx context.Context, _ *Options) (*otlptrace.Exporter, error) {
+	return otlptracehttp.New(ctx,
+		otlptracehttp.WithEndpoint(constants.TelemetryEndpoint),
+		otlptracehttp.WithURLPath(constants.TelemetryTracesPath),
+		otlptracehttp.WithHeaders(internal.GetHeaders()),
+	)
+}
+
+func newProcessor(exporter *otlptrace.Exporter) trace.SpanProcessor { //nolint:ireturn
+	return trace.NewBatchSpanProcessor(exporter)
+}
+
+func newProvider(processor trace.SpanProcessor) *trace.TracerProvider {
+	resource := internal.GetResource()
+	return trace.NewTracerProvider(
+		trace.WithResource(resource),
+		trace.WithSpanProcessor(processor),
+	)
+}

@@ -3,7 +3,7 @@
  * register.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 02:14:04 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 02:21:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -17,3 +17,26 @@
  */
 
 package tracer
+
+import (
+	"context"
+
+	"go.opentelemetry.io/otel"
+)
+
+var _handler = new(Tracer)
+
+func Register(ctx context.Context, opts *Options) error {
+	p, err := NewTracer(ctx, opts)
+	if err != nil {
+		return err
+	}
+	otel.SetTracerProvider(p.provider)
+
+	_handler = p
+	return nil
+}
+
+func Shutdown(ctx context.Context) error {
+	return _handler.Shutdown(ctx)
+}
