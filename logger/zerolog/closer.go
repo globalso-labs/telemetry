@@ -3,7 +3,7 @@
  * closer.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 19:29:46 -0500 by nick.
+ * Last modified at Sun, 4 Aug 2024 00:44:15 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,4 +16,4 @@
  * or otherwise exploit this software.
  */
 
-package otlp
+package zerolog

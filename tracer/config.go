@@ -18,7 +18,9 @@
 
 package meter
 
-import "go.globalso.dev/x/telemetry/meter/constants"
+import (
+	"go.globalso.dev/x/telemetry/internal/constants"
+)
 
 var defaultOptions = Options{
 	Enabled:        true,
