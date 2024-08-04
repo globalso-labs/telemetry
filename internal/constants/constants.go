@@ -1,6 +1,6 @@
 /*
  * telemetry
- * constants.go
+ * exporter.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
  * Last modified at Mon, 8 Jul 2024 20:45:52 -0500 by nick.

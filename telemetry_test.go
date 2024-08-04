@@ -29,7 +29,7 @@ import (
 	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/logger/level"
+	"go.globalso.dev/x/telemetry/logger/constants"
 )
 
 func Test_Telemetry(t *testing.T) {
@@ -40,7 +40,7 @@ func Test_Telemetry(t *testing.T) {
 	defer cancel()
 
 	lOpts := []logger.Option{
-		logger.WithLevel(level.TraceLevel),
+		logger.WithLevel(constants.TraceLevel),
 		logger.WithWriter(io.Discard),
 	}
 
@@ -53,7 +53,7 @@ func Test_Telemetry(t *testing.T) {
 	)
 	telemetry.Execute(ctx, cfg)
 
-	// We aren't testing the Fatal level here, since the test will exit after the first call to Fatal.
+	// We aren't testing the Fatal constants here, since the test will exit after the first call to Fatal.
 	for {
 		select {
 		case <-ctx.Done():
