@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/globalso-labs/telemetry/compare/v0.4.0...v0.5.0) (2024-08-06)
+
+
+### Features
+
+* add With function to create zerolog.Context ([65c81e7](https://github.com/globalso-labs/telemetry/commit/65c81e786606b40d6c57f8ee2cfcfeb29274097a))
+
 ## [0.4.0](https://github.com/globalso-labs/telemetry/compare/v0.3.0...v0.4.0) (2024-08-06)
 
 
