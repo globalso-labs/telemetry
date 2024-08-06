@@ -30,27 +30,6 @@ func init() { //nolint: gochecknoinits // This is the only way to set the defaul
 	zerolog.CallerMarshalFunc = internal.CallerMarshalFunc
 }
 
-// WithFields adds fields to the zerolog.Logger in the provided context.
-//
-// This function retrieves the zerolog.Logger from the context, adds the specified fields
-// to the logger's context, and returns the updated logger. It is useful for adding
-// contextual information to logs.
-//
-// Parameters:
-// - ctx context.Context: The context from which to retrieve the logger.
-// - fields map[string]any: The fields to add to the logger's context.
-//
-// Returns:
-// - *zerolog.Logger: The updated logger with the added fields.
-func WithFields(ctx context.Context, fields map[string]interface{}) *zerolog.Logger {
-	l := Ctx(ctx)
-	l.UpdateContext(func(c zerolog.Context) zerolog.Context {
-		return c.Fields(fields)
-	})
-
-	return l
-}
-
 // Ctx retrieves the zerolog.Logger from the provided context.
 func Ctx(ctx context.Context) *zerolog.Logger {
 	return zerolog.Ctx(ctx)
