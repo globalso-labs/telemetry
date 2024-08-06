@@ -68,7 +68,7 @@ func Test_NewContext(t *testing.T) {
 		l1.Log().Msg("with parameter")
 
 		actual := new(bytes.Buffer)
-		l2 := logger.WithFields(main, fields).Output(actual)
+		l2 := logger.Ctx(main).With().Fields(fields).Logger().Output(actual)
 		l2.Log().Msg("with parameter")
 		assert.NotSame(t, &expected, logger.Ctx(main))
 		assert.Equal(t, expected.String(), actual.String())
