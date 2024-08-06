@@ -35,6 +35,9 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 	return zerolog.Ctx(ctx)
 }
 
+// With returns a new zerolog.Context.
+func With() zerolog.Context { return internal.DefaultContextLogger.With() }
+
 // Log logs a no-constants message using the zerolog.Logger from the provided context.
 func Log() *zerolog.Event {
 	return internal.DefaultContextLogger.Log()
