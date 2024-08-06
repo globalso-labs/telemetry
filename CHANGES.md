@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/globalso-labs/telemetry/compare/v0.3.0...v0.4.0) (2024-08-06)
+
+
+### Features
+
+* remove WithFields function from zerolog logger ([3f8f37c](https://github.com/globalso-labs/telemetry/commit/3f8f37cd608997cac6c801c73df93736f6977453))
+
 ## [0.3.0](https://github.com/globalso-labs/telemetry/compare/v0.2.0...v0.3.0) (2024-08-04)
 
 
