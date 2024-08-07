@@ -26,7 +26,7 @@ import (
 	"go.opentelemetry.io/otel/log/global"
 )
 
-var _handler = new(Logger)
+var _handler = new(Holder)
 
 func Register(ctx context.Context, opts *Options) error {
 	p, err := NewLogger(ctx, opts)

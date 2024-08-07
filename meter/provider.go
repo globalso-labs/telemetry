@@ -29,51 +29,51 @@ import (
 	"go.opentelemetry.io/otel/sdk/metric"
 )
 
-// Meter represents a structure for managing meter collection and export.
+// Holder represents a structure for managing meter collection and export.
 // It contains the following fields:
 // - provider: A pointer to the MeterProvider which manages metric instruments and readers.
 // - reader: A metric.Reader that periodically reads and exports meter.
 // - exporter: A metric.Exporter that sends meter to a backend.
-type Meter struct {
+type Holder struct {
 	provider *metric.MeterProvider
 	reader   metric.Reader
 	exporter metric.Exporter
 }
 
-// NewMeter creates a new Meter instance for meter collection and export.
-// It takes a context and a Meter configuration as parameters.
+// NewMeter creates a new Holder instance for meter collection and export.
+// It takes a context and a Holder configuration as parameters.
 // If telemetry is not enabled in the configuration, it returns an error.
 // It initializes the metric exporter, reader, and provider, and returns
-// the Meter instance or an error if any step fails.
-func NewMeter(ctx context.Context, config *Options) (*Meter, error) {
+// the Holder instance or an error if any step fails.
+func NewMeter(ctx context.Context, config *Options) (*Holder, error) {
 	if !config.IsEnabled() {
 		return nil, errors.ErrTelemetryMetricsNotEnabled
 	}
 
-	meter := new(Meter)
+	holder := new(Holder)
 
 	// Create the exporter.
 	exporter, err := newHTTPExporter(ctx, config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create metric exporter: %w", err)
 	}
-	meter.exporter = exporter
+	holder.exporter = exporter
 
 	// Create the reader.
-	meter.reader = newReader(exporter, config)
+	holder.reader = newReader(exporter, config)
 
 	// Create the provider.
-	meter.provider = newProvider(meter.reader)
+	holder.provider = newProvider(holder.reader)
 
-	return meter, nil
+	return holder, nil
 }
 
-func (m Meter) Provider() *metric.MeterProvider {
+func (m Holder) Provider() *metric.MeterProvider {
 	return m.provider
 }
 
 // Shutdown stops the metric provider.
-func (m Meter) Shutdown(ctx context.Context) error {
+func (m Holder) Shutdown(ctx context.Context) error {
 	if err := m.provider.Shutdown(ctx); err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func (m Meter) Shutdown(ctx context.Context) error {
 }
 
 // newHTTPExporter creates a new OTLP HTTP exporter for meter.
-// It takes a context and a Meter configuration as parameters.
+// It takes a context and a Holder configuration as parameters.
 // It returns an OTLP HTTP exporter or an error if the creation fails.
 func newHTTPExporter(ctx context.Context, _ *Options) (*otlpmetrichttp.Exporter, error) {
 	return otlpmetrichttp.New(ctx,
@@ -97,7 +97,7 @@ func newHTTPExporter(ctx context.Context, _ *Options) (*otlpmetrichttp.Exporter,
 }
 
 // newReader creates a new PeriodicReader for meter.
-// It takes a metric exporter and a Meter configuration as parameters.
+// It takes a metric exporter and a Holder configuration as parameters.
 // It returns a PeriodicReader configured with the specified export interval.
 func newReader(exporter metric.Exporter, opts *Options) *metric.PeriodicReader {
 	return metric.NewPeriodicReader(exporter,
@@ -106,7 +106,7 @@ func newReader(exporter metric.Exporter, opts *Options) *metric.PeriodicReader {
 }
 
 // newProvider creates a new MeterProvider for meter.
-// It takes a metric reader and a Meter configuration as parameters.
+// It takes a metric reader and a Holder configuration as parameters.
 // It returns a MeterProvider configured with the specified resource and reader.
 func newProvider(reader metric.Reader) *metric.MeterProvider {
 	resource := internal.GetResource()

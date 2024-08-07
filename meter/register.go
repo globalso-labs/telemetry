@@ -26,11 +26,11 @@ import (
 	"go.opentelemetry.io/otel"
 )
 
-var _handler = new(Meter)
+var _handler = new(Holder)
 
 // Register initializes and registers the OpenTelemetry meter provider.
 //
-// This function creates a new Meter instance using the provided context and configuration,
+// This function creates a new Holder instance using the provided context and configuration,
 // sets it as the global meter provider, and starts the host and runtime instrumentation.
 //
 // Parameters:
