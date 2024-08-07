@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/globalso-labs/telemetry/compare/v0.5.0...v0.6.0) (2024-08-07)
+
+
+### Features
+
+* add version tracking and telemetry middleware ([c638f39](https://github.com/globalso-labs/telemetry/commit/c638f39f63a62fc61555dc89f22929e58aacbc5f))
+
 ## [0.5.0](https://github.com/globalso-labs/telemetry/compare/v0.4.0...v0.5.0) (2024-08-06)
 
 
