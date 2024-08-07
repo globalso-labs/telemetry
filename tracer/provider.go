@@ -30,40 +30,40 @@ import (
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 
-type Tracer struct {
+type Holder struct {
 	provider  *trace.TracerProvider
 	processor trace.SpanProcessor
 	exporter  trace.SpanExporter
 }
 
-func NewTracer(ctx context.Context, config *Options) (*Tracer, error) {
+func NewTracer(ctx context.Context, config *Options) (*Holder, error) {
 	if !config.IsEnabled() {
 		return nil, errors.ErrTelemetryTracesNotEnabled
 	}
 
-	tracer := new(Tracer)
+	holder := new(Holder)
 
 	// Create the exporter.
 	exporter, err := newHTTPExporter(ctx, config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
 	}
-	tracer.exporter = exporter
+	holder.exporter = exporter
 
 	// Create the processor.
-	tracer.processor = newProcessor(exporter)
+	holder.processor = newProcessor(exporter)
 
 	// Create the tracer provider.
-	tracer.provider = newProvider(tracer.processor)
+	holder.provider = newProvider(holder.processor)
 
-	return tracer, nil
+	return holder, nil
 }
 
-func (t Tracer) Provider() *trace.TracerProvider {
+func (t Holder) Provider() *trace.TracerProvider {
 	return t.provider
 }
 
-func (t Tracer) Shutdown(ctx context.Context) error {
+func (t Holder) Shutdown(ctx context.Context) error {
 	if err := t.provider.Shutdown(ctx); err != nil {
 		return err
 	}

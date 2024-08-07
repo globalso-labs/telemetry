@@ -1,9 +1,9 @@
 /*
- * telemetry
- * register.go
- * This file is part of telemetry.
- * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 02:21:28 -0500 by nick.
+ * go-template
+ * version.go
+ * This file is part of go-template.
+ * Copyright (c) 2023.
+ * Last modified at Sun, 24 Dec 2023 21:26:41 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,27 +16,8 @@
  * or otherwise exploit this software.
  */
 
-package tracer
+package internal
 
-import (
-	"context"
+const Module = "Nia-AI"
 
-	"go.opentelemetry.io/otel"
-)
-
-var _handler = new(Holder)
-
-func Register(ctx context.Context, opts *Options) error {
-	p, err := NewTracer(ctx, opts)
-	if err != nil {
-		return err
-	}
-	otel.SetTracerProvider(p.provider)
-
-	_handler = p
-	return nil
-}
-
-func Shutdown(ctx context.Context) error {
-	return _handler.Shutdown(ctx)
-}
+const Version = "0.9.0"
