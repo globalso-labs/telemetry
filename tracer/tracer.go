@@ -1,9 +1,9 @@
 /*
  * telemetry
- * register.go
+ * tracer.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 01:45:28 -0500 by nick.
+ * Last modified at Tue, 6 Aug 2024 22:11:00 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,37 +16,37 @@
  * or otherwise exploit this software.
  */
 
-package logger
+package tracer
 
 import (
-	"context"
+	"sync"
 
-	"go.globalso.dev/x/telemetry/logger/otlp"
-	internal "go.globalso.dev/x/telemetry/logger/zerolog"
-	"go.opentelemetry.io/otel/log/global"
+	"go.globalso.dev/x/telemetry/internal"
+	"go.opentelemetry.io/otel/trace"
 )
 
-var _handler = new(Holder)
+// _tracer is a singleton instance of a trace.Tracer.
+// It is initialized only once and used throughout the application.
+var _tracer trace.Tracer
 
-func Register(ctx context.Context, opts *Options) error {
-	p, err := NewLogger(ctx, opts)
-	if err != nil {
-		return err
+// _sync is a mutex used to synchronize the initialization of the _tracer instance.
+var _sync sync.Mutex
+
+// Tracer returns a singleton instance of a trace.Tracer.
+// It ensures that the tracer is initialized only once using a mutex for synchronization.
+//
+// Returns:
+// - trace.Tracer: The singleton tracer instance.
+func Tracer() trace.Tracer { //nolint:ireturn
+	_sync.Lock()
+	defer _sync.Unlock()
+
+	if _tracer == nil {
+		_tracer = _handler.Provider().Tracer(
+			internal.Module,
+			trace.WithInstrumentationVersion(internal.Version),
+		)
 	}
 
-	global.SetLoggerProvider(p.provider)
-
-	writer := internal.WithCloser(opts.Writer, p.Close)
-	l := internal.DefaultContextLogger.
-		Output(writer).
-		Hook(otlp.Hook{}).
-		Level(opts.Level)
-	internal.DefaultContextLogger = l
-
-	_handler = p
-	return nil
-}
-
-func Shutdown(ctx context.Context) error {
-	return _handler.Shutdown(ctx)
+	return _tracer
 }

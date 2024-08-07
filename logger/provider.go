@@ -30,40 +30,40 @@ import (
 	"go.opentelemetry.io/otel/sdk/log"
 )
 
-type Logger struct {
+type Holder struct {
 	provider  *log.LoggerProvider
 	processor log.Processor
 	exporter  log.Exporter
 }
 
-func NewLogger(ctx context.Context, config *Options) (*Logger, error) {
+func NewLogger(ctx context.Context, config *Options) (*Holder, error) {
 	if !config.IsEnabled() {
 		return nil, errors.ErrTelemetryLogsNotEnabled
 	}
 
-	logger := new(Logger)
+	holder := new(Holder)
 
 	// Create the exporter.
 	exporter, err := newExporter(ctx, config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log exporter: %w", err)
 	}
-	logger.exporter = exporter
+	holder.exporter = exporter
 
 	// Create the processor.
-	logger.processor = newProcessor(exporter)
+	holder.processor = newProcessor(exporter)
 
-	// Create the logger provider.
-	logger.provider = newLoggerProvider(logger.processor)
+	// Create the holder provider.
+	holder.provider = newLoggerProvider(holder.processor)
 
-	return logger, nil
+	return holder, nil
 }
 
-func (l *Logger) Provider() *log.LoggerProvider {
+func (l *Holder) Provider() *log.LoggerProvider {
 	return l.provider
 }
 
-func (l *Logger) Shutdown(ctx context.Context) error {
+func (l *Holder) Shutdown(ctx context.Context) error {
 	if err := l.provider.Shutdown(ctx); err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func (l *Logger) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (l *Logger) Close() error {
+func (l *Holder) Close() error {
 	ctx := context.Background()
 	return _handler.Shutdown(ctx)
 }

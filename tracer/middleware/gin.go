@@ -1,0 +1,79 @@
+/*
+ * telemetry
+ * middleware.go
+ * This file is part of telemetry.
+ * Copyright (c) 2024.
+ * Last modified at Tue, 6 Aug 2024 22:15:45 -0500 by nick.
+ *
+ * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
+ * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
+ * damages, including any general, special, incidental, or consequential damages arising out of the use or inability
+ * to use the software (that includes, but not limited to, loss of data, data being rendered inaccurate, or losses
+ * sustained by you or third parties, or a failure of the software to operate with any other programs), even if the
+ * author has been advised of the possibility of such damages.
+ * If a license file is provided with this software, all use of this software is governed by the terms and conditions
+ * set forth in that license file. If no license file is provided, no rights are granted to use, modify, distribute,
+ * or otherwise exploit this software.
+ */
+
+package middleware
+
+import (
+	"github.com/gin-gonic/gin"
+	"go.globalso.dev/x/telemetry/internal"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/semconv/v1.20.0/httpconv"
+	"go.opentelemetry.io/otel/trace"
+
+	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
+)
+
+const (
+	tracerKey = "otel-tracer"
+)
+
+func GinTracer(service string) gin.HandlerFunc {
+	provider := otel.GetTracerProvider()
+	tracer := provider.Tracer(
+		internal.Module,
+		trace.WithInstrumentationVersion(internal.Version),
+	)
+
+	propagator := otel.GetTextMapPropagator()
+
+	return func(c *gin.Context) {
+		c.Set(tracerKey, tracer)
+		savedCtx := c.Request.Context()
+		defer func() {
+			c.Request = c.Request.WithContext(savedCtx)
+		}()
+
+		ctx := propagator.Extract(savedCtx, propagation.HeaderCarrier(c.Request.Header))
+		opts := []trace.SpanStartOption{
+			trace.WithAttributes(semconv.ServiceName(service)),
+			trace.WithAttributes(httpconv.ClientRequest(c.Request)...),
+			trace.WithAttributes(semconv.HTTPRoute(c.FullPath())),
+			trace.WithSpanKind(trace.SpanKindServer),
+		}
+
+		ctx, span := tracer.Start(ctx, c.FullPath(), opts...)
+		defer span.End()
+
+		// pass the span through the request context
+		c.Request = c.Request.WithContext(ctx)
+
+		// serve the request to the next middleware
+		c.Next()
+
+		status := c.Writer.Status()
+		span.SetStatus(httpconv.ServerStatus(status))
+		if status > 0 {
+			span.SetAttributes(semconv.HTTPStatusCode(status))
+		}
+		if len(c.Errors) > 0 {
+			span.SetAttributes(attribute.String("gin.errors", c.Errors.String()))
+		}
+	}
+}

@@ -24,7 +24,7 @@ import (
 	"go.opentelemetry.io/otel"
 )
 
-var _handler = new(Tracer)
+var _handler = new(Holder)
 
 func Register(ctx context.Context, opts *Options) error {
 	p, err := NewTracer(ctx, opts)

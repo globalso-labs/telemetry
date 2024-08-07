@@ -1,9 +1,9 @@
 /*
  * telemetry
- * register.go
+ * version.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 01:45:28 -0500 by nick.
+ * Last modified at Tue, 6 Aug 2024 22:42:19 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,37 +16,8 @@
  * or otherwise exploit this software.
  */
 
-package logger
+package internal
 
-import (
-	"context"
+const Module = "Telemetry"
 
-	"go.globalso.dev/x/telemetry/logger/otlp"
-	internal "go.globalso.dev/x/telemetry/logger/zerolog"
-	"go.opentelemetry.io/otel/log/global"
-)
-
-var _handler = new(Holder)
-
-func Register(ctx context.Context, opts *Options) error {
-	p, err := NewLogger(ctx, opts)
-	if err != nil {
-		return err
-	}
-
-	global.SetLoggerProvider(p.provider)
-
-	writer := internal.WithCloser(opts.Writer, p.Close)
-	l := internal.DefaultContextLogger.
-		Output(writer).
-		Hook(otlp.Hook{}).
-		Level(opts.Level)
-	internal.DefaultContextLogger = l
-
-	_handler = p
-	return nil
-}
-
-func Shutdown(ctx context.Context) error {
-	return _handler.Shutdown(ctx)
-}
+const Version = "0.4.0"
