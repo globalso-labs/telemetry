@@ -1,9 +1,9 @@
 /*
- * go-template
+ * telemetry
  * version.go
- * This file is part of go-template.
- * Copyright (c) 2023.
- * Last modified at Sun, 24 Dec 2023 21:26:41 -0500 by nick.
+ * This file is part of telemetry.
+ * Copyright (c) 2024.
+ * Last modified at Tue, 6 Aug 2024 22:42:19 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,6 +18,6 @@
 
 package internal
 
-const Module = "Nia-AI"
+const Module = "Telemetry"
 
-const Version = "0.9.0"
+const Version = "0.4.0"
