@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * agent.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:36:10 -0500 by nick.
+ * Last modified at Thu, 12 Sep 2024 21:18:29 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,32 +18,7 @@
 
 package config
 
-import (
-	"go.globalso.dev/x/telemetry/logger"
-	"go.globalso.dev/x/telemetry/meter"
-)
-
-// Config is the configuration all submodules share.
-type Config struct {
-	Enabled bool
-	Meter   meter.Options
-	Logger  logger.Options
-}
-
-func (c *Config) IsEnabled() bool {
-	return c.Enabled
-}
-
-func New(opts ...Option) Config {
-	c := Config{
-		Enabled: true,
-		Meter:   meter.NewConfig(),
-		Logger:  logger.NewConfig(),
-	}
-
-	for _, opt := range opts {
-		opt.Apply(&c)
-	}
-
-	return c
+type Agent struct {
+	Enabled   bool `yaml:"enabled"`
+	Receivers any  `yaml:"receivers"`
 }

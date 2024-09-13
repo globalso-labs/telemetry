@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config_test.go
+ * telemetry.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:42:52 -0500 by nick.
+ * Last modified at Thu, 12 Sep 2024 21:16:25 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,4 +16,16 @@
  * or otherwise exploit this software.
  */
 
-package config_test
+package config
+
+type Telemetry struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+	Protocol string `yaml:"protocol"`
+	Scrape   Scrape `yaml:"scrape"`
+	Push     Push   `yaml:"push"`
+	Agent    Agent  `yaml:"agent"`
+	Logger   Logger `yaml:"logger"`
+	Meter    Meter  `yaml:"meter"`
+	Tracer   Tracer `yaml:"tracer"`
+}
