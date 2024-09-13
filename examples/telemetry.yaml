@@ -1,0 +1,71 @@
+# Telemetry is a feature that allows you to collect and send data to a remote server.
+# This data can be used to monitor the health of the system, debug issues, and more.
+# The data is sent to a remote server using the HTTP protocol.
+telemetry:
+  # Whether global telemetry is enabled or not. If set to false, no telemetry data will be sent.
+  enabled: true
+  # The URL to which the telemetry data will be sent.
+  endpoint: telemetry.idbi.pe
+  # The protocol to use when sending telemetry data. Can be either http/https or grpc.
+  protocol: https
+  # The global scrape config. This config is used to scrape data from the system and send it to the remote server.
+  scrape:
+    # The global interval at which telemetry data will be read. This is a duration string.
+    interval: 5s
+  # The global push config. This config is used to send data to the remote server.
+  push:
+    # The global interval at which telemetry data will be sent. This is a duration string.
+    interval: 30s
+  # The list of agents that will be used to collect and send telemetry data.
+  agent:
+    # Whether the agent is enabled or not. If set to false, no telemetry data will be collected by the agent.
+    enabled: true
+    # The list of receivers that will be used to receive telemetry data.
+    receivers:
+      # Filelog receiver is used to collect logs from a file.
+      filelog:
+        include: [/var/log/busybox/simple.log]
+      # Nginx receiver is used to collect metrics from nginx server.
+      nginx:
+        collection_interval: 10s
+        endpoint: "http://localhost:80/status"
+      # Hostmetrics receiver is used to collect metrics from the host system.
+      hostmetrics:
+        collection_interval: 30s
+        scrapers:
+          cpu:
+          load:
+          memory:
+          disk:
+          filesystem:
+          network:
+          paging:
+          processes:
+  # The config for the logging service . This config is used to send logs telemetry data.
+  logger:
+    # Whether the logger is enabled or not. If set to false, no logs will be sent to the remote server.
+    enabled: true
+    # The logger scrape config. This config is used to scrape data from the system and send it to the remote server.
+    push:
+      # The logger interval at which telemetry data will be sent. This is a duration string.
+      interval: 30s
+  # The config for the metrics service. This config is used to send metrics telemetry data.
+  meter:
+    # Whether the meter is enabled or not. If set to false, no metrics will be sent to the remote server.
+    enabled: true
+    # The meter scrape config. This config is used to scrape data from the system and send it to the remote server.
+    scrape:
+      # The meter interval at which telemetry data will be read. This is a duration string.
+      interval: 5s
+    # The meter push config. This config is used to send data to the remote server.
+    push:
+      # The meter interval at which telemetry data will be sent. This is a duration string.
+      interval: 30s
+  # The config for the tracing service. This config is used to send tracing telemetry data.
+  tracer:
+    # Whether the tracer is enabled or not. If set to false, no traces will be sent to the remote server.
+    enabled: true
+    # The tracer push config. This config is used to send data to the remote server.
+    push:
+      # The tracer interval at which telemetry data will be sent. This is a duration string.
+      interval: 30s
