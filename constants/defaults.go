@@ -1,9 +1,9 @@
 /*
  * telemetry
- * global.go
+ * constants.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 15:49:42 -0500 by nick.
+ * Last modified at Sat, 14 Sep 2024 01:28:28 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,30 +16,18 @@
  * or otherwise exploit this software.
  */
 
-package zerolog
+package constants
 
-import (
-	"io"
+import "time"
 
-	"github.com/rs/zerolog"
-	"go.globalso.dev/x/telemetry/logger/constants"
-)
+const Protocol = "https"
+const Endpoint = "telemetry.idbi.pe"
 
-// DefaultContextLogger is the default logger instance configured with a console writer,
-// default logging constants, timestamp, and caller information.
-var DefaultContextLogger = zerolog.New(NewConsoleWriter()).
-	Level(constants.DefaultLoggerLevel).With().
-	Timestamp().
-	Caller().
-	Logger()
+const LoggerPath = "otlp/v1/logs"
+const MeterPath = "otlp/v1/metrics"
+const TracePath = "otlp/v1/traces"
 
-// New creates a new zerolog.Logger instance with the provided writer.
-//
-// Parameters:
-// - w io.Writer: The writer to which the log output will be written.
-//
-// Returns:
-// - zerolog.Logger: A new logger instance.
-func New(w io.Writer) zerolog.Logger {
-	return zerolog.New(w)
-}
+const ScrapeInterval = 5 * time.Second
+const PushInterval = 30 * time.Second
+
+const OrganizationID = "anonymous"

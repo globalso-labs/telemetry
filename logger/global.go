@@ -1,9 +1,9 @@
 /*
  * telemetry
- * getters.go
+ * global.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 31 Jul 2024 21:12:14 -0500 by nick.
+ * Last modified at Sun, 15 Sep 2024 18:57:38 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,28 +16,16 @@
  * or otherwise exploit this software.
  */
 
-package common
+package logger
 
-func ID() string {
-	return Options.id
-}
+import (
+	"github.com/rs/zerolog"
+)
 
-func Name() string {
-	return Options.name
-}
+// logger is the global logger instance.
+var logger = zerolog.Nop()
 
-func Namespace() string {
-	return Options.namespace
-}
-
-func Version() string {
-	return Options.version
-}
-
-func OrganizationID() string {
-	return Options.organizationID
-}
-
-func OTLPEndpoint() string {
-	return Options.otlpEndpoint
+// SetGlobalLogger sets the global logger instance.
+func SetGlobalLogger(l zerolog.Logger) {
+	logger = l
 }

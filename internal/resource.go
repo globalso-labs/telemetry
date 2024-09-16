@@ -3,7 +3,7 @@
  * resource.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 00:25:06 -0500 by nick.
+ * Last modified at Sat, 14 Sep 2024 21:35:27 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -19,19 +19,69 @@
 package internal
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.opentelemetry.io/otel/sdk/resource"
+	"runtime/debug"
 
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
+	"github.com/denisbrodbeck/machineid"
 )
 
-// GetResource returns the service resource.
-func GetResource() *resource.Resource {
-	attrs := resource.Default().Attributes()
-	attrs = append(attrs, semconv.ServiceInstanceIDKey.String(common.ID()))
-	attrs = append(attrs, semconv.ServiceNameKey.String(common.Name()))
-	attrs = append(attrs, semconv.ServiceNamespaceKey.String(common.Namespace()))
-	attrs = append(attrs, semconv.ServiceVersionKey.String(common.Version()))
+type Option func(*Resource)
 
-	return resource.NewWithAttributes(semconv.SchemaURL, attrs...)
+type Resource struct {
+	id        string
+	name      string
+	namespace string
+	version   string
+}
+
+func (r *Resource) GetID() string {
+	if r.id == "" {
+		m, _ := machineid.ID()
+		r.id = m
+	}
+
+	return r.id
+}
+
+func (r *Resource) GetName() string {
+	return r.name
+}
+
+func (r *Resource) GetNamespace() string {
+	if r.namespace == "" {
+		bi, _ := debug.ReadBuildInfo()
+		r.namespace = bi.Main.Path
+	}
+
+	return r.namespace
+}
+
+func (r *Resource) GetVersion() string {
+	return r.version
+}
+
+func WithName(name string) Option {
+	return func(r *Resource) {
+		r.name = name
+	}
+}
+
+func WithNamespace(namespace string) Option {
+	return func(r *Resource) {
+		r.namespace = namespace
+	}
+}
+
+func WithVersion(version string) Option {
+	return func(r *Resource) {
+		r.version = version
+	}
+}
+
+func NewResource(opts ...Option) *Resource {
+	r := new(Resource)
+	for _, opt := range opts {
+		opt(r)
+	}
+
+	return r
 }

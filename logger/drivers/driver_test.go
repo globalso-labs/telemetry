@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * driver_test.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:52:12 -0500 by nick.
+ * Last modified at Fri, 13 Sep 2024 19:45:21 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,31 +16,20 @@
  * or otherwise exploit this software.
  */
 
-package logger
+package drivers_test
 
 import (
-	"go.globalso.dev/x/telemetry/logger/constants"
-	"go.globalso.dev/x/telemetry/logger/zerolog"
-	constants2 "go.globalso.dev/x/telemetry/meter/constants"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"go.globalso.dev/x/telemetry/logger/drivers"
 )
 
-var defaultOptions = Options{
-	Enabled:        true,
-	ExportInterval: constants2.DefaultMetricExportInterval,
-	Level:          constants.DefaultLoggerLevel,
-	Writer:         zerolog.NewConsoleWriter(),
-}
+func TestNew(t *testing.T) {
+	t.Parallel()
 
-func (c *Options) IsEnabled() bool {
-	return c.Enabled
-}
-
-func NewConfig(opts ...Option) Options {
-	c := defaultOptions
-
-	for _, opt := range opts {
-		opt.ApplyLoggerOption(&c)
-	}
-
-	return c
+	driver := "console"
+	d, err := drivers.New([]string{driver})
+	require.Nil(t, err)
+	require.NotNil(t, d)
 }
