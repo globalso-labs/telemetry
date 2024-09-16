@@ -1,9 +1,9 @@
 /*
  * telemetry
- * headers.go
+ * header.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 01:16:30 -0500 by nick.
+ * Last modified at Sat, 14 Sep 2024 00:41:13 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,10 +16,6 @@
  * or otherwise exploit this software.
  */
 
-package constants
+package config
 
-// HeaderTracer is the header key for the tracer.
-const HeaderTracer = "X-Tracer"
-
-// HeaderScopeOrgID is the header key for the organization ID.
-const HeaderScopeOrgID = "X-Scope-OrgID"
+type Headers map[string]string

@@ -1,9 +1,9 @@
 /*
  * telemetry
- * global.go
+ * console.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 17:54:20 -0500 by nick.
+ * Last modified at Fri, 13 Sep 2024 15:07:48 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,7 +16,25 @@
  * or otherwise exploit this software.
  */
 
-package constants
+package drivers
 
-// DefaultOrganizationID is the default organization ID for telemetry.
-const DefaultOrganizationID = "anonymous"
+import (
+	"io"
+	"os"
+	"time"
+
+	"github.com/rs/zerolog"
+)
+
+type Console struct {
+	io.WriteCloser
+}
+
+func NewConsole() *Console {
+	writer := zerolog.NewConsoleWriter(func(w *zerolog.ConsoleWriter) {
+		w.TimeFormat = time.RFC3339
+		w.Out = os.Stdout
+	})
+
+	return &Console{writer}
+}

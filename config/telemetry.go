@@ -18,14 +18,41 @@
 
 package config
 
+import (
+	"gopkg.in/yaml.v2"
+)
+
 type Telemetry struct {
-	Enabled  bool   `yaml:"enabled"`
-	Endpoint string `yaml:"endpoint"`
-	Protocol string `yaml:"protocol"`
-	Scrape   Scrape `yaml:"scrape"`
-	Push     Push   `yaml:"push"`
-	Agent    Agent  `yaml:"agent"`
-	Logger   Logger `yaml:"logger"`
-	Meter    Meter  `yaml:"meter"`
-	Tracer   Tracer `yaml:"tracer"`
+	Enabled  bool    `yaml:"enabled"`
+	Endpoint string  `yaml:"endpoint"`
+	Protocol string  `yaml:"protocol"`
+	Headers  Headers `yaml:"headers"`
+	Scrape   Scrape  `yaml:"scrape"`
+	Push     Push    `yaml:"push"`
+	Agent    Agent   `yaml:"agent"`
+	Logger   Logger  `yaml:"logger"`
+	Meter    Meter   `yaml:"meter"`
+	Tracer   Tracer  `yaml:"tracer"`
+}
+
+// Enable activates the telemetry and its associated components (Agent, Logger, Meter, Tracer).
+func (t *Telemetry) Enable() {
+	t.Enabled = true
+	t.Agent.Enabled = true
+	t.Logger.Enabled = true
+	t.Meter.Enabled = true
+	t.Tracer.Enabled = true
+}
+
+// Disable deactivates the telemetry and its associated components (Tracer, Meter, Logger, Agent).
+func (t *Telemetry) Disable() {
+	t.Tracer.Enabled = false
+	t.Meter.Enabled = false
+	t.Logger.Enabled = false
+	t.Agent.Enabled = false
+	t.Enabled = false
+}
+
+func (t *Telemetry) Dump() ([]byte, error) {
+	return yaml.Marshal(t)
 }

@@ -1,9 +1,9 @@
 /*
  * telemetry
- * exporter.go
+ * headers.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 21:05:00 -0500 by nick.
+ * Last modified at Sat, 14 Sep 2024 19:51:17 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,16 +16,6 @@
  * or otherwise exploit this software.
  */
 
-package common
+package constants
 
-// Common holds configuration settings for telemetry.
-// It includes the organization ID, OTLP endpoint, and OTLP path.
-type Common struct {
-	id        string // id is the unique identifier for the telemetry instance. Used to identify the running instance.
-	name      string // name is the name of the service or application. Used to identify the service or application.
-	namespace string // namespace is the name of the group of services. Used to group services or applications.
-	version   string // version is the version of the service. Used to identify the version of service.
-
-	organizationID string // organizationID is the unique identifier for the organization.
-	otlpEndpoint   string // otlpEndpoint is the endpoint for OpenTelemetry Protocol (OTLP) communication.
-}
+const ScopeOrgID = "X-Scope-OrgID"

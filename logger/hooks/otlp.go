@@ -1,4 +1,22 @@
-package otlp
+/*
+ * telemetry
+ * otlp.go
+ * This file is part of telemetry.
+ * Copyright (c) 2024.
+ * Last modified at Sun, 15 Sep 2024 18:34:32 -0500 by nick.
+ *
+ * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
+ * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
+ * damages, including any general, special, incidental, or consequential damages arising out of the use or inability
+ * to use the software (that includes, but not limited to, loss of data, data being rendered inaccurate, or losses
+ * sustained by you or third parties, or a failure of the software to operate with any other programs), even if the
+ * author has been advised of the possibility of such damages.
+ * If a license file is provided with this software, all use of this software is governed by the terms and conditions
+ * set forth in that license file. If no license file is provided, no rights are granted to use, modify, distribute,
+ * or otherwise exploit this software.
+ */
+
+package hooks
 
 import (
 	"encoding/json"
@@ -8,7 +26,32 @@ import (
 
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel/log"
+	"go.opentelemetry.io/otel/log/global"
 )
+
+// OTLPHook struct defines a logger hook for the zerolog logging library.
+type OTLPHook struct{}
+
+// Run is the method that gets called on each log event.
+// It converts the zerolog event to an OpenTelemetry log record and emits it using the global logger provider.
+// In case of PanicLevel or FatalLevel log events, it also attempts to shut down the logger provider gracefully.
+//
+// Parameters:
+// - event: The zerolog event that contains all the log information.
+// - constants: The logging constants of the event (e.g., Info, Warn, Error).
+// - message: The log message.
+//
+// The method extracts the context from the event, converts the event to an OpenTelemetry log record,
+// and emits the record using the global logger provider. If the log constants is PanicLevel or FatalLevel,
+// it shuts down the logger provider to ensure all logs are flushed before the application exits.
+func (h OTLPHook) Run(event *zerolog.Event, level zerolog.Level, message string) {
+	ctx := event.GetCtx()
+
+	// Extract context from the event.
+	record := h.convertEvent(event, level, message) // Convert zerolog event to OpenTelemetry log record.
+	provider := global.GetLoggerProvider()          // Get the global logger provider.
+	provider.Logger("global").Emit(ctx, record)     // Emit the log record.
+}
 
 // convertEvent transforms a zerolog event into an OpenTelemetry log record.
 //
@@ -23,13 +66,13 @@ import (
 //
 // Returns:
 // - log.Record: The constructed OpenTelemetry log record.
-func (h Hook) convertEvent(e *zerolog.Event, level zerolog.Level, msg string) log.Record {
+func (h OTLPHook) convertEvent(e *zerolog.Event, level zerolog.Level, msg string) log.Record {
 	var record log.Record
-	record.SetTimestamp(time.Now().UTC())      // Set the timestamp using zerolog's configured function.
-	record.SetBody(log.StringValue(msg))       // Set the log message body.
-	record.SetSeverity(convertSeverity(level)) // Convert and set the severity constants based on zerolog's constants.
-	record.SetSeverityText(level.String())     // Set the severity text using zerolog's constants string.
-	record.AddAttributes(convertFields(e)...)  // Convert and add any additional fields  attributes.
+	record.SetTimestamp(time.Now().UTC())         // Set the timestamp using zerolog's configured function.
+	record.SetBody(log.StringValue(msg))          // Set the log message body.
+	record.SetSeverity(convertSeverity(level))    // Convert and set the severity constants based on zerolog's constants.
+	record.SetSeverityText(level.String())        // Set the severity text using zerolog's constants string.
+	record.AddAttributes(convertOTLPFields(e)...) // Convert and add any additional fields  attributes.
 	return record
 }
 
@@ -61,7 +104,7 @@ func convertSeverity(level zerolog.Level) log.Severity {
 	case zerolog.FatalLevel:
 		return log.SeverityFatal1
 	case zerolog.PanicLevel:
-		return log.SeverityFatal2
+		return log.SeverityFatal3
 	case zerolog.NoLevel, zerolog.Disabled:
 		return log.SeverityUndefined
 	}
@@ -69,7 +112,7 @@ func convertSeverity(level zerolog.Level) log.Severity {
 	return log.SeverityUndefined
 }
 
-// convertFields extracts and converts zerolog event fields to OpenTelemetry key-value pairs.
+// convertOTLPFields extracts and converts zerolog event fields to OpenTelemetry key-value pairs.
 //
 // This function iterates over all fields present in a zerolog event, converting each field
 // to an OpenTelemetry log.KeyValue structure. The conversion process is handled by the
@@ -81,7 +124,7 @@ func convertSeverity(level zerolog.Level) log.Severity {
 //
 // Returns:
 // - []log.KeyValue: A slice of OpenTelemetry key-value pairs representing the converted fields.
-func convertFields(e *zerolog.Event) []log.KeyValue {
+func convertOTLPFields(e *zerolog.Event) []log.KeyValue {
 	ev := fmt.Sprintf("%s}", reflect.ValueOf(e).Elem().FieldByName("buf"))
 	data := make(map[string]interface{})
 	if err := json.Unmarshal([]byte(ev), &data); err != nil {
@@ -160,7 +203,7 @@ func convertValue(v interface{}) log.Value {
 		return log.MapValue(kvs...)
 	case reflect.Ptr, reflect.Interface:
 		return convertValue(val.Elem().Interface())
+	default:
+		return log.StringValue(fmt.Sprintf("unhandled attribute type: (%s) %+v", t, v))
 	}
-
-	return log.StringValue(fmt.Sprintf("unhandled attribute type: (%s) %+v", t, v))
 }

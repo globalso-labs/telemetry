@@ -8,6 +8,10 @@ telemetry:
   endpoint: telemetry.idbi.pe
   # The protocol to use when sending telemetry data. Can be either http/https or grpc.
   protocol: https
+  # The headers to include when sending telemetry data. This is a map of key-value pairs.
+  headers:
+    # The Organization ID header. This is used to identify the organization that is sending the telemetry data.
+    X-Scope-OrgID: anonymous
   # The global scrape config. This config is used to scrape data from the system and send it to the remote server.
   scrape:
     # The global interval at which telemetry data will be read. This is a duration string.
@@ -45,6 +49,14 @@ telemetry:
   logger:
     # Whether the logger is enabled or not. If set to false, no logs will be sent to the remote server.
     enabled: true
+    # The logger telemetry path. This is the path where the logger will write the telemetry data.
+    path: otlp/v1/logs
+    # The log level to use when printing logs. Can be either trace, debug, info, warn, error, or fatal.
+    level: trace
+    # The output driver to use when working logs. Can be either console or file.
+    drivers: [console]
+    # The hooks to use when writing logs. This is a list of hooks that will be used to send logs to the remote server.
+    hooks: [sentry, otlp]
     # The logger scrape config. This config is used to scrape data from the system and send it to the remote server.
     push:
       # The logger interval at which telemetry data will be sent. This is a duration string.
@@ -53,6 +65,8 @@ telemetry:
   meter:
     # Whether the meter is enabled or not. If set to false, no metrics will be sent to the remote server.
     enabled: true
+    # The meter telemetry path. This is the path where the meter will write the telemetry data.
+    path: otlp/v1/metrics
     # The meter scrape config. This config is used to scrape data from the system and send it to the remote server.
     scrape:
       # The meter interval at which telemetry data will be read. This is a duration string.
@@ -65,6 +79,8 @@ telemetry:
   tracer:
     # Whether the tracer is enabled or not. If set to false, no traces will be sent to the remote server.
     enabled: true
+    # The tracer telemetry path. This is the path where the tracer will write the telemetry data.
+    path: otlp/v1/traces
     # The tracer push config. This config is used to send data to the remote server.
     push:
       # The tracer interval at which telemetry data will be sent. This is a duration string.

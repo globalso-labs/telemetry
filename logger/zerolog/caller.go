@@ -1,9 +1,9 @@
 /*
  * telemetry
- * provider_test.go
+ * options_generic.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 10 Jul 2024 13:02:58 -0500 by nick.
+ * Last modified at Wed, 10 Jul 2024 00:23:06 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,4 +16,20 @@
  * or otherwise exploit this software.
  */
 
-package logger
+package zerolog
+
+import (
+	"regexp"
+	"strconv"
+	"strings"
+)
+
+var CallerMarshalFunc = func(_ uintptr, file string, line int) string {
+	r := regexp.MustCompile(`[^\\/]+[\\/][^\\/]+$`)
+	shortPath := r.FindString(file)
+	if shortPath != "" {
+		file = shortPath
+	}
+	file = strings.ReplaceAll(file, "\\", "/")
+	return file + ":" + strconv.Itoa(line)
+}

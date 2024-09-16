@@ -22,13 +22,7 @@ import (
 	"context"
 
 	"github.com/rs/zerolog"
-	internal "go.globalso.dev/x/telemetry/logger/zerolog"
 )
-
-func init() { //nolint: gochecknoinits // This is the only way to set the default logger.
-	zerolog.DefaultContextLogger = &internal.DefaultContextLogger
-	zerolog.CallerMarshalFunc = internal.CallerMarshalFunc
-}
 
 // Ctx retrieves the zerolog.Logger from the provided context.
 func Ctx(ctx context.Context) *zerolog.Logger {
@@ -36,30 +30,30 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 }
 
 // With returns a new zerolog.Context.
-func With() zerolog.Context { return internal.DefaultContextLogger.With() }
+func With() zerolog.Context { return logger.With() }
 
 // Log logs a no-constants message using the zerolog.Logger from the provided context.
 func Log() *zerolog.Event {
-	return internal.DefaultContextLogger.Log()
+	return logger.Log()
 }
 
 // Trace logs a trace constants message using the zerolog.Logger from the provided context.
-func Trace() *zerolog.Event { return internal.DefaultContextLogger.Trace() }
+func Trace() *zerolog.Event { return logger.Trace() }
 
 // Debug logs a debug constants message using the zerolog.Logger from the provided context.
-func Debug() *zerolog.Event { return internal.DefaultContextLogger.Debug() }
+func Debug() *zerolog.Event { return logger.Debug() }
 
 // Info logs an info constants message using the zerolog.Logger from the provided context.
-func Info() *zerolog.Event { return internal.DefaultContextLogger.Info() }
+func Info() *zerolog.Event { return logger.Info() }
 
 // Warn logs a warn constants message using the zerolog.Logger from the provided context.
-func Warn() *zerolog.Event { return internal.DefaultContextLogger.Warn() }
+func Warn() *zerolog.Event { return logger.Warn() }
 
 // Error logs an error constants message using the zerolog.Logger from the provided context.
-func Error() *zerolog.Event { return internal.DefaultContextLogger.Error() }
+func Error() *zerolog.Event { return logger.Error() }
 
 // Fatal logs a fatal constants message using the zerolog.Logger from the provided context.
-func Fatal() *zerolog.Event { return internal.DefaultContextLogger.Fatal() }
+func Fatal() *zerolog.Event { return logger.Fatal() }
 
 // Panic logs a panic constants message using the zerolog.Logger from the provided context.
-func Panic() *zerolog.Event { return internal.DefaultContextLogger.Panic() }
+func Panic() *zerolog.Event { return logger.Panic() }

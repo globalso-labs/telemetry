@@ -1,9 +1,9 @@
 /*
  * telemetry
- * closer.go
+ * hook.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 00:44:15 -0500 by nick.
+ * Last modified at Sun, 15 Sep 2024 19:37:17 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,19 +16,27 @@
  * or otherwise exploit this software.
  */
 
-package zerolog
+package hooks
 
-import "io"
+import (
+	"fmt"
 
-type closerWriter struct {
-	io.Writer
-	closer func() error
-}
+	"github.com/rs/zerolog"
+)
 
-func (w closerWriter) Close() error {
-	return w.closer()
-}
+func New(hooks []string) ([]zerolog.Hook, error) {
+	output := make([]zerolog.Hook, 0, len(hooks))
 
-func WithCloser(writer io.Writer, closer func() error) io.WriteCloser {
-	return closerWriter{Writer: writer, closer: closer}
+	for _, driver := range hooks {
+		switch driver {
+		case "otlp":
+			output = append(output, OTLPHook{})
+		case "sentry":
+			output = append(output, SentryHook{})
+		default:
+			return nil, fmt.Errorf("unknown driver: %s", driver)
+		}
+	}
+
+	return output, nil
 }

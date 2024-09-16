@@ -20,6 +20,7 @@ package config
 
 type Meter struct {
 	Enabled bool   `yaml:"enabled"`
+	Path    string `yaml:"path"`
 	Scrape  Scrape `yaml:"scrape"`
 	Push    Push   `yaml:"push"`
 }

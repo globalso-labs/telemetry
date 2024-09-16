@@ -20,57 +20,62 @@ package telemetry_test
 
 import (
 	"context"
-	"io"
-	"math/rand"
+	"os"
 	"testing"
-	"time"
 
-	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.globalso.dev/x/telemetry"
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/logger"
+	"go.globalso.dev/x/telemetry/internal"
+	"gopkg.in/yaml.v3"
 )
 
-func Test_Telemetry(t *testing.T) {
+type holder struct {
+	*config.Telemetry `yaml:"telemetry"`
+}
+
+func TestInitialize(t *testing.T) {
 	t.Parallel()
 
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
+	instance := telemetry.Initialize(context.Background())
+	require.NotNil(t, instance)
 
-	lOpts := []logger.Option{
-		logger.WithLevel(zerolog.TraceLevel),
-		logger.WithWriter(io.Discard),
-	}
+	assert.Equal(t, config.Default(), instance.GetConfig())
+	assert.Nil(t, instance.GetResource())
+}
 
-	cOpts := []common.Option{
-		common.WithVersion("1.0.0"),
-	}
-	cfg := config.New(
-		config.WithLoggerOpts(lOpts...),
-		config.WithCommonOpts(cOpts...),
+func TestInitializeWithConfig(t *testing.T) {
+	t.Parallel()
+
+	data, err := os.ReadFile("examples/telemetry.yaml")
+	require.Nil(t, err)
+
+	var c holder
+	err = yaml.Unmarshal(data, &c)
+	require.Nil(t, err)
+
+	instance := telemetry.Initialize(context.Background(), telemetry.WithConfig(c.Telemetry))
+	require.NotNil(t, instance)
+	assert.Equal(t, c.Telemetry, instance.GetConfig())
+	assert.Nil(t, instance.GetResource())
+
+	d, err := c.Telemetry.Dump()
+	require.Nil(t, err)
+	assert.NotEmpty(t, d)
+}
+
+func TestInitializeWithResource(t *testing.T) {
+	t.Parallel()
+
+	r := internal.NewResource(
+		internal.WithNamespace("namespace"),
+		internal.WithName("name"),
+		internal.WithVersion(internal.Version),
 	)
-	telemetry.Execute(ctx, cfg)
 
-	// We aren't testing the Fatal constants here, since the test will exit after the first call to Fatal.
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			switch rand.Intn(5) {
-			case 0:
-				logger.Trace().Msg("This is a trace message")
-			case 1:
-				logger.Debug().Msg("This is a debug message")
-			case 2:
-				logger.Info().Msg("This is an info message")
-			case 3:
-				logger.Warn().Msg("This is a warn message")
-			case 4:
-				logger.Error().Msg("This is an error message")
-			}
-		}
-	}
+	instance := telemetry.Initialize(context.Background(), telemetry.WithResource(r))
+	require.NotNil(t, instance)
+	assert.Equal(t, config.Default(), instance.GetConfig())
+	assert.Equal(t, r, instance.GetResource())
 }

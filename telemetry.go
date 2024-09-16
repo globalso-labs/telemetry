@@ -22,18 +22,43 @@ import (
 	"context"
 
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/meter"
+	"go.globalso.dev/x/telemetry/tracer"
 )
 
-func Execute(ctx context.Context, cfg config.Config) {
-	if err := logger.Register(ctx, &cfg.Logger); err != nil {
-		logger.Ctx(ctx).Warn().Msg(err.Error())
-	}
-	logger.Ctx(ctx).Info().Msg("telemetry logger registered")
+type Telemetry struct {
+	ctx      context.Context
+	config   *config.Telemetry
+	resource *internal.Resource
 
-	if err := meter.Register(ctx, &cfg.Meter); err != nil {
-		logger.Ctx(ctx).Warn().Msg(err.Error())
+	logger *logger.Logger
+	tracer *tracer.Holder
+	meter  *meter.Holder
+}
+
+func (t *Telemetry) GetConfig() *config.Telemetry {
+	return t.config
+}
+
+func (t *Telemetry) GetResource() *internal.Resource {
+	return t.resource
+}
+
+func newTelemetry(ctx context.Context) *Telemetry {
+	return &Telemetry{
+		ctx:      ctx,
+		config:   config.Default(),
+		resource: nil,
 	}
-	logger.Ctx(ctx).Info().Msg("telemetry meter registered")
+}
+
+func Initialize(ctx context.Context, opts ...Option) *Telemetry {
+	t := newTelemetry(ctx)
+	for _, opt := range opts {
+		opt(t)
+	}
+
+	return t
 }

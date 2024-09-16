@@ -19,6 +19,7 @@
 package config
 
 type Tracer struct {
-	Enabled bool `yaml:"enabled"`
-	Push    Push `yaml:"push"`
+	Enabled bool   `yaml:"enabled"`
+	Path    string `yaml:"path"`
+	Push    Push   `yaml:"push"`
 }

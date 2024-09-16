@@ -18,6 +18,8 @@
 
 package config
 
+import "time"
+
 type Push struct {
-	Interval string `yaml:"interval"`
+	Interval time.Duration `yaml:"interval"`
 }

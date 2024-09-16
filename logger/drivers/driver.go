@@ -1,9 +1,9 @@
 /*
  * telemetry
- * resource.go
+ * driver.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 00:47:06 -0500 by nick.
+ * Last modified at Fri, 13 Sep 2024 15:26:20 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,14 +16,29 @@
  * or otherwise exploit this software.
  */
 
-package constants
+package drivers
 
-import "github.com/denisbrodbeck/machineid"
+import (
+	"fmt"
+	"io"
+	"slices"
 
-var MachineID, _ = machineid.ID()
-
-const (
-	ServiceNamespace = "telemetry"
-	ServiceName      = "internal"
-	ServiceVersion   = "v0.0.0-alpha.0"
+	"go.globalso.dev/x/telemetry/logger/zerolog"
 )
+
+func New(drivers []string) (io.Writer, error) {
+	output := make([]io.Writer, 0, len(drivers))
+
+	slices.Sort(drivers)
+	drivers = slices.Compact(drivers)
+	for _, driver := range drivers {
+		switch driver {
+		case "console":
+			output = append(output, NewConsole())
+		default:
+			return nil, fmt.Errorf("unknown driver: %s", driver)
+		}
+	}
+
+	return zerolog.NewMultiWriter(output...), nil
+}
