@@ -20,54 +20,25 @@ package tracer
 
 import (
 	"context"
-	"fmt"
 
+	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
-	"go.globalso.dev/x/telemetry/internal/constants"
-	"go.globalso.dev/x/telemetry/pkg/errors"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 
-type Holder struct {
+type Tracer struct {
 	provider  *trace.TracerProvider
 	processor trace.SpanProcessor
 	exporter  trace.SpanExporter
 }
 
-func NewTracer(ctx context.Context, config *Options) (*Holder, error) {
-	if !config.IsEnabled() {
-		return nil, errors.ErrTelemetryTracesNotEnabled
-	}
-
-	holder := new(Holder)
-
-	// Create the exporter.
-	exporter, err := newHTTPExporter(ctx, config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
-	}
-	holder.exporter = exporter
-
-	// Create the processor.
-	holder.processor = newProcessor(exporter)
-
-	// Create the tracer provider.
-	holder.provider = newProvider(holder.processor)
-
-	return holder, nil
-}
-
-func (t Holder) Provider() *trace.TracerProvider {
+func (t Tracer) Provider() *trace.TracerProvider {
 	return t.provider
 }
 
-func (t Holder) Shutdown(ctx context.Context) error {
-	if err := t.provider.Shutdown(ctx); err != nil {
-		return err
-	}
-
+func (t Tracer) Shutdown(ctx context.Context) error {
 	if err := t.processor.Shutdown(ctx); err != nil {
 		return err
 	}
@@ -76,23 +47,27 @@ func (t Holder) Shutdown(ctx context.Context) error {
 		return err
 	}
 
+	if err := t.provider.Shutdown(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func newHTTPExporter(ctx context.Context, _ *Options) (*otlptrace.Exporter, error) {
+func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlptrace.Exporter, error) {
 	return otlptracehttp.New(ctx,
-		otlptracehttp.WithEndpoint(constants.TelemetryEndpoint),
-		otlptracehttp.WithURLPath(constants.TelemetryTracesPath),
-		otlptracehttp.WithHeaders(internal.GetHeaders()),
+		otlptracehttp.WithEndpoint(cfg.Endpoint),
+		otlptracehttp.WithURLPath(cfg.Tracer.Path),
+		otlptracehttp.WithHeaders(cfg.Headers),
 	)
 }
 
-func newProcessor(exporter *otlptrace.Exporter) trace.SpanProcessor { //nolint:ireturn
+func newProcessor(_ context.Context, exporter *otlptrace.Exporter) trace.SpanProcessor { //nolint:ireturn
 	return trace.NewBatchSpanProcessor(exporter)
 }
 
-func newProvider(processor trace.SpanProcessor) *trace.TracerProvider {
-	resource := internal.GetResource()
+func newProvider(ctx context.Context, res *internal.Resource, processor trace.SpanProcessor) *trace.TracerProvider {
+	resource := internal.GetResource(ctx, res)
 	return trace.NewTracerProvider(
 		trace.WithResource(resource),
 		trace.WithSpanProcessor(processor),
