@@ -44,5 +44,4 @@ func TestInitialize(t *testing.T) {
 	t.Logf("buffer: %s", buffer.String())
 	err = h.Shutdown(context.Background())
 	require.Nil(t, err)
-
 }
