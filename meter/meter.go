@@ -3,7 +3,7 @@
  * meter.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Thu, 12 Sep 2024 21:18:56 -0500 by nick.
+ * Last modified at Tue, 17 Sep 2024 22:46:10 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,41 +16,4 @@
  * or otherwise exploit this software.
  */
 
-package config
-
-import (
-	"go.globalso.dev/x/telemetry/constants"
-	"gopkg.in/yaml.v3"
-)
-
-type Meter struct {
-	Enabled bool   `yaml:"enabled"`
-	Path    string `yaml:"path"`
-	Scrape  Scrape `yaml:"scrape"`
-	Push    Push   `yaml:"push"`
-}
-
-func (m *Meter) Enable() {
-	m.Enabled = true
-}
-
-func (m *Meter) Disable() {
-	m.Enabled = false
-}
-
-func (m *Meter) Dump() ([]byte, error) {
-	return yaml.Marshal(m)
-}
-
-func MeterDefault() Meter {
-	return Meter{
-		Enabled: false,
-		Path:    constants.MeterPath,
-		Scrape: Scrape{
-			Interval: constants.ScrapeInterval,
-		},
-		Push: Push{
-			Interval: constants.PushInterval,
-		},
-	}
-}
+package meter

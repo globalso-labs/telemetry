@@ -18,8 +18,35 @@
 
 package config
 
+import (
+	"go.globalso.dev/x/telemetry/constants"
+	"gopkg.in/yaml.v3"
+)
+
 type Tracer struct {
 	Enabled bool   `yaml:"enabled"`
 	Path    string `yaml:"path"`
 	Push    Push   `yaml:"push"`
+}
+
+func (t *Tracer) Enable() {
+	t.Enabled = true
+}
+
+func (t *Tracer) Disable() {
+	t.Enabled = false
+}
+
+func (t *Tracer) Dump() ([]byte, error) {
+	return yaml.Marshal(t)
+}
+
+func TracerDefault() Tracer {
+	return Tracer{
+		Enabled: false,
+		Path:    constants.TracePath,
+		Push: Push{
+			Interval: constants.PushInterval,
+		},
+	}
 }
