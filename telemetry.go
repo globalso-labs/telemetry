@@ -34,8 +34,8 @@ type Telemetry struct {
 	resource *internal.Resource
 
 	logger *logger.Logger
-	tracer *tracer.Holder
-	meter  *meter.Holder
+	tracer *tracer.Tracer
+	meter  *meter.Meter
 }
 
 func (t *Telemetry) GetConfig() *config.Telemetry {

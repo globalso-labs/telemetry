@@ -47,15 +47,13 @@ func (m *Meter) Provider() *metric.MeterProvider {
 // Shutdown gracefully shuts down the Meter, including its provider, reader, and exporter.
 // It takes a context to allow for cancellation and returns an error if any component fails to shut down.
 func (m *Meter) Shutdown(ctx context.Context) error {
-	if err := m.provider.Shutdown(ctx); err != nil {
-		return err
-	}
-
 	if err := m.reader.Shutdown(ctx); err != nil {
 		return err
 	}
-
 	if err := m.exporter.Shutdown(ctx); err != nil {
+		return err
+	}
+	if err := m.provider.Shutdown(ctx); err != nil {
 		return err
 	}
 
@@ -66,23 +64,17 @@ func (m *Meter) Shutdown(ctx context.Context) error {
 // It takes a context and a Meter configuration as parameters.
 // It returns an OTLP HTTP exporter or an error if the creation fails.
 func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlpmetrichttp.Exporter, error) {
-	exporter, err := otlpmetrichttp.New(ctx,
+	return otlpmetrichttp.New(ctx,
 		otlpmetrichttp.WithEndpoint(cfg.Endpoint),
 		otlpmetrichttp.WithURLPath(cfg.Meter.Path),
 		otlpmetrichttp.WithHeaders(cfg.Headers),
 	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return exporter, nil
 }
 
 // newReader creates a new PeriodicReader for meter.
 // It takes a metric exporter and a Meter configuration as parameters.
 // It returns a PeriodicReader configured with the specified export interval.
-func newReader(exporter metric.Exporter, cfg *config.Telemetry) *metric.PeriodicReader {
+func newReader(_ context.Context, exporter metric.Exporter, cfg *config.Telemetry) *metric.PeriodicReader {
 	return metric.NewPeriodicReader(exporter,
 		metric.WithInterval(cfg.Meter.Scrape.Interval),
 	)
