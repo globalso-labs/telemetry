@@ -3,7 +3,7 @@
  * tracer.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 6 Aug 2024 22:11:00 -0500 by nick.
+ * Last modified at Wed, 18 Sep 2024 00:00:25 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -19,34 +19,51 @@
 package tracer
 
 import (
-	"sync"
+	"context"
+	"fmt"
 
+	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
-	"go.opentelemetry.io/otel/trace"
+	"go.globalso.dev/x/telemetry/pkg/errors"
+	"go.opentelemetry.io/otel"
 )
 
-// _tracer is a singleton instance of a trace.Tracer.
-// It is initialized only once and used throughout the application.
-var _tracer trace.Tracer
-
-// _sync is a mutex used to synchronize the initialization of the _tracer instance.
-var _sync sync.Mutex
-
-// Tracer returns a singleton instance of a trace.Tracer.
-// It ensures that the tracer is initialized only once using a mutex for synchronization.
+// Initialize sets up the Tracer instance with the provided context, configuration, and resource.
+//
+// Parameters:
+// - ctx context.Context: The context to use for initialization.
+// - cfg *config.Telemetry: The telemetry configuration to be used.
+// - res *internal.Resource: The resource to be used.
 //
 // Returns:
-// - trace.Tracer: The singleton tracer instance.
-func Tracer() trace.Tracer { //nolint:ireturn
-	_sync.Lock()
-	defer _sync.Unlock()
-
-	if _tracer == nil {
-		_tracer = _handler.Provider().Tracer(
-			internal.Module,
-			trace.WithInstrumentationVersion(internal.Version),
-		)
+// - *Tracer: The initialized Tracer instance.
+// - error: An error if the initialization fails.
+func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resource) (*Tracer, error) {
+	if !cfg.Enabled {
+		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	return _tracer
+	if !cfg.Tracer.Enabled {
+		return nil, errors.ErrTelemetryTracerNotEnabled
+	}
+
+	holder := new(Tracer)
+
+	// Create the exporter.
+	exporter, err := newExporter(ctx, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
+	}
+	holder.exporter = exporter
+
+	// Create the processor.
+	holder.processor = newProcessor(ctx, exporter)
+
+	// Create the provider.
+	holder.provider = newProvider(ctx, res, holder.processor)
+
+	// Set the global provider.
+	otel.SetTracerProvider(holder.provider)
+
+	return holder, nil
 }

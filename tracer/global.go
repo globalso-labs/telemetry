@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * global.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 02:21:28 -0500 by nick.
+ * Last modified at Wed, 18 Sep 2024 00:08:43 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,20 +18,17 @@
 
 package tracer
 
-var defaultOptions = Options{
-	Enabled: true,
+import (
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
+)
+
+var tracer = otel.Tracer("global")
+
+func SetGlobalTracer(t trace.Tracer) {
+	tracer = t
 }
 
-func (c *Options) IsEnabled() bool {
-	return c.Enabled
-}
-
-func NewConfig(opts ...Option) Options {
-	c := defaultOptions
-
-	for _, opt := range opts {
-		opt.ApplyOption(&c)
-	}
-
-	return c
+func Global() trace.Tracer { //nolint:ireturn
+	return tracer
 }
