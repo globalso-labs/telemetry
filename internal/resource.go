@@ -19,8 +19,6 @@
 package internal
 
 import (
-	"runtime/debug"
-
 	"github.com/denisbrodbeck/machineid"
 )
 
@@ -43,13 +41,16 @@ func (r *Resource) GetID() string {
 }
 
 func (r *Resource) GetName() string {
+	if r.name == "" {
+		r.name = "unknown"
+	}
+
 	return r.name
 }
 
 func (r *Resource) GetNamespace() string {
 	if r.namespace == "" {
-		bi, _ := debug.ReadBuildInfo()
-		r.namespace = bi.Main.Path
+		r.namespace = "default"
 	}
 
 	return r.namespace

@@ -58,7 +58,7 @@ func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resour
 	holder.exporter = exporter
 
 	// Create the reader.
-	holder.reader = newReader(exporter, cfg)
+	holder.reader = newReader(ctx, exporter, cfg)
 
 	// Create the provider.
 	holder.provider = newProvider(ctx, res, holder.reader)

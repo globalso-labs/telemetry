@@ -38,15 +38,14 @@ func (l *Logger) Provider() *log.LoggerProvider {
 }
 
 func (l *Logger) Shutdown(ctx context.Context) error {
-	if err := l.provider.Shutdown(ctx); err != nil {
-		return err
-	}
-
 	if err := l.processor.Shutdown(ctx); err != nil {
 		return err
 	}
 
 	if err := l.exporter.Shutdown(ctx); err != nil {
+		return err
+	}
+	if err := l.provider.Shutdown(ctx); err != nil {
 		return err
 	}
 
@@ -59,17 +58,11 @@ func (l *Logger) Close() error {
 }
 
 func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlploghttp.Exporter, error) {
-
-	exporter, err := otlploghttp.New(ctx,
+	return otlploghttp.New(ctx,
 		otlploghttp.WithEndpoint(cfg.Endpoint),
 		otlploghttp.WithURLPath(cfg.Logger.Path),
 		otlploghttp.WithHeaders(cfg.Headers),
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	return exporter, nil
 }
 
 func newProcessor(_ context.Context, exporter *otlploghttp.Exporter) *log.BatchProcessor {

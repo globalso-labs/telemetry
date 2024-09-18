@@ -33,9 +33,8 @@ func TestInitialize_Success(t *testing.T) {
 
 	ctx := context.Background()
 	cfg := config.Default()
-	res := &internal.Resource{}
 
-	m, err := meter.Initialize(ctx, cfg, res)
+	m, err := meter.Initialize(ctx, cfg, internal.NewResource())
 	defer m.Shutdown(ctx)
 
 	assert.NoError(t, err)
@@ -51,9 +50,8 @@ func TestInitialize_TelemetryNotEnabled(t *testing.T) {
 		Enabled: false,
 		Meter:   config.MeterDefault(),
 	}
-	res := &internal.Resource{}
 
-	m, err := meter.Initialize(ctx, cfg, res)
+	m, err := meter.Initialize(ctx, cfg, internal.NewResource())
 	assert.ErrorIs(t, err, errors.ErrTelemetryNotEnabled)
 	assert.Nil(t, m)
 }
@@ -65,9 +63,7 @@ func TestInitialize_MeterNotEnabled(t *testing.T) {
 	cfg := config.Default()
 	cfg.Meter.Disable()
 
-	res := &internal.Resource{}
-
-	m, err := meter.Initialize(ctx, cfg, res)
+	m, err := meter.Initialize(ctx, cfg, internal.NewResource())
 	assert.ErrorIs(t, err, errors.ErrTelemetryMeterNotEnabled)
 	assert.Nil(t, m)
 }

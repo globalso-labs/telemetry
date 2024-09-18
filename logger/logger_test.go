@@ -41,7 +41,6 @@ func TestInitialize(t *testing.T) {
 	l.Info().Msg("test")
 	require.Contains(t, buffer.String(), "test")
 
-	t.Logf("buffer: %s", buffer.String())
 	err = h.Shutdown(context.Background())
 	require.Nil(t, err)
 }

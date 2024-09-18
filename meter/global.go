@@ -29,6 +29,6 @@ func SetGlobalMeter(m metric.Meter) {
 	meter = m
 }
 
-func Global() metric.Meter {
+func Global() metric.Meter { //nolint:ireturn
 	return meter
 }
