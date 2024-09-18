@@ -17,3 +17,18 @@
  */
 
 package meter
+
+import (
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/metric"
+)
+
+var meter = otel.Meter("global")
+
+func SetGlobalMeter(m metric.Meter) {
+	meter = m
+}
+
+func Global() metric.Meter {
+	return meter
+}
