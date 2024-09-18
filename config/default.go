@@ -1,9 +1,9 @@
 /*
  * telemetry
- * config.go
+ * parse.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Mon, 8 Jul 2024 20:52:12 -0500 by nick.
+ * Last modified at Thu, 12 Sep 2024 22:02:08 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,26 +16,35 @@
  * or otherwise exploit this software.
  */
 
-package meter
+package config
 
-import "go.globalso.dev/x/telemetry/meter/constants"
+import (
+	"go.globalso.dev/x/telemetry/constants"
+)
 
-var defaultOptions = Options{
-	Enabled:        true,
-	ReadInterval:   constants.DefaultMetricReadInterval,
-	ExportInterval: constants.DefaultMetricExportInterval,
-}
-
-func (c *Options) IsEnabled() bool {
-	return c.Enabled
-}
-
-func NewConfig(opts ...Option) Options {
-	c := defaultOptions
-
-	for _, opt := range opts {
-		opt.ApplyOption(&c)
+func Default() *Telemetry {
+	t := &Telemetry{
+		Enabled:  true,
+		Endpoint: constants.Endpoint,
+		Protocol: constants.Protocol,
+		Headers: Headers{
+			constants.ScopeOrgID: constants.OrganizationID,
+		},
+		Scrape: Scrape{
+			Interval: constants.ScrapeInterval,
+		},
+		Push: Push{
+			Interval: constants.PushInterval,
+		},
+		Agent: Agent{
+			Enabled:   false,
+			Receivers: nil,
+		},
+		Logger: LoggerDefault(),
+		Meter:  MeterDefault(),
+		Tracer: TracerDefault(),
 	}
 
-	return c
+	t.Enable()
+	return t
 }

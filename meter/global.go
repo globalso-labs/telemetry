@@ -1,9 +1,9 @@
 /*
  * telemetry
- * exporter.go
+ * global.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sun, 4 Aug 2024 00:07:28 -0500 by nick.
+ * Last modified at Tue, 17 Sep 2024 22:31:50 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,16 +16,4 @@
  * or otherwise exploit this software.
  */
 
-package constants
-
-import "time"
-
-const (
-	// DefaultMetricReadInterval is the default interval for reading metrics.
-	// It is set to 5 seconds.
-	DefaultMetricReadInterval = 5 * time.Second
-
-	// DefaultMetricExportInterval is the default interval for exporting metrics.
-	// It is set to 5 seconds.
-	DefaultMetricExportInterval = 5 * time.Second
-)
+package meter

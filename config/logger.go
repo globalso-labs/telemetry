@@ -18,6 +18,11 @@
 
 package config
 
+import (
+	"go.globalso.dev/x/telemetry/constants"
+	"gopkg.in/yaml.v3"
+)
+
 type Logger struct {
 	Enabled bool     `yaml:"enabled" json:"enabled,omitempty"`
 	Path    string   `yaml:"path" json:"path,omitempty"`
@@ -25,4 +30,29 @@ type Logger struct {
 	Drivers []string `yaml:"drivers" json:"drivers,omitempty"`
 	Hooks   []string `yaml:"hooks" json:"hooks,omitempty"`
 	Push    Push     `yaml:"push" json:"push"`
+}
+
+func (l *Logger) Enable() {
+	l.Enabled = true
+}
+
+func (l *Logger) Disable() {
+	l.Enabled = false
+}
+
+func (l *Logger) Dump() ([]byte, error) {
+	return yaml.Marshal(l)
+}
+
+func LoggerDefault() Logger {
+	return Logger{
+		Enabled: true,
+		Path:    constants.LoggerPath,
+		Level:   "trace",
+		Drivers: []string{"console"},
+		Hooks:   []string{"otlp"},
+		Push: Push{
+			Interval: constants.PushInterval,
+		},
+	}
 }
