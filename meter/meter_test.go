@@ -15,5 +15,59 @@
  * set forth in that license file. If no license file is provided, no rights are granted to use, modify, distribute,
  * or otherwise exploit this software.
  */
+package meter_test
 
-package meter
+import (
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/meter"
+	"go.globalso.dev/x/telemetry/pkg/errors"
+)
+
+func TestInitialize_Success(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	cfg := config.Default()
+	res := &internal.Resource{}
+
+	m, err := meter.Initialize(ctx, cfg, res)
+	defer m.Shutdown(ctx)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, m)
+
+}
+
+func TestInitialize_TelemetryNotEnabled(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	cfg := &config.Telemetry{
+		Enabled: false,
+		Meter:   config.MeterDefault(),
+	}
+	res := &internal.Resource{}
+
+	m, err := meter.Initialize(ctx, cfg, res)
+	assert.ErrorIs(t, err, errors.ErrTelemetryNotEnabled)
+	assert.Nil(t, m)
+}
+
+func TestInitialize_MeterNotEnabled(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	cfg := config.Default()
+	cfg.Meter.Disable()
+
+	res := &internal.Resource{}
+
+	m, err := meter.Initialize(ctx, cfg, res)
+	assert.ErrorIs(t, err, errors.ErrTelemetryMeterNotEnabled)
+	assert.Nil(t, m)
+}

@@ -20,61 +20,38 @@ package meter
 
 import (
 	"context"
-	"fmt"
 
+	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
-	"go.globalso.dev/x/telemetry/internal/constants"
-	"go.globalso.dev/x/telemetry/pkg/errors"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
 )
 
-// Holder represents a structure for managing meter collection and export.
+// Meter represents a structure for managing meter collection and export.
 // It contains the following fields:
 // - provider: A pointer to the MeterProvider which manages metric instruments and readers.
 // - reader: A metric.Reader that periodically reads and exports meter.
 // - exporter: A metric.Exporter that sends meter to a backend.
-type Holder struct {
+type Meter struct {
 	provider *metric.MeterProvider
 	reader   metric.Reader
 	exporter metric.Exporter
 }
 
-// NewMeter creates a new Holder instance for meter collection and export.
-// It takes a context and a Holder configuration as parameters.
-// If telemetry is not enabled in the configuration, it returns an error.
-// It initializes the metric exporter, reader, and provider, and returns
-// the Holder instance or an error if any step fails.
-func NewMeter(ctx context.Context, config *Options) (*Holder, error) {
-	if !config.IsEnabled() {
-		return nil, errors.ErrTelemetryMetricsNotEnabled
-	}
-
-	holder := new(Holder)
-
-	// Create the exporter.
-	exporter, err := newHTTPExporter(ctx, config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create metric exporter: %w", err)
-	}
-	holder.exporter = exporter
-
-	// Create the reader.
-	holder.reader = newReader(exporter, config)
-
-	// Create the provider.
-	holder.provider = newProvider(holder.reader)
-
-	return holder, nil
-}
-
-func (m Holder) Provider() *metric.MeterProvider {
+// Provider returns the MeterProvider associated with the Meter.
+// It provides access to the metric instruments and readers managed by the provider.
+func (m *Meter) Provider() *metric.MeterProvider {
 	return m.provider
 }
 
-// Shutdown stops the metric provider.
-func (m Holder) Shutdown(ctx context.Context) error {
+// Shutdown gracefully shuts down the Meter, including its provider, reader, and exporter.
+// It takes a context to allow for cancellation and returns an error if any component fails to shut down.
+func (m *Meter) Shutdown(ctx context.Context) error {
 	if err := m.provider.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	if err := m.reader.Shutdown(ctx); err != nil {
 		return err
 	}
 
@@ -85,32 +62,37 @@ func (m Holder) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-// newHTTPExporter creates a new OTLP HTTP exporter for meter.
-// It takes a context and a Holder configuration as parameters.
+// newExporter creates a new OTLP HTTP exporter for meter.
+// It takes a context and a Meter configuration as parameters.
 // It returns an OTLP HTTP exporter or an error if the creation fails.
-func newHTTPExporter(ctx context.Context, _ *Options) (*otlpmetrichttp.Exporter, error) {
-	return otlpmetrichttp.New(ctx,
-		otlpmetrichttp.WithEndpoint(constants.TelemetryEndpoint),
-		otlpmetrichttp.WithURLPath(constants.TelemetryMetricsPath),
-		otlpmetrichttp.WithHeaders(internal.GetHeaders()),
+func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlpmetrichttp.Exporter, error) {
+	exporter, err := otlpmetrichttp.New(ctx,
+		otlpmetrichttp.WithEndpoint(cfg.Endpoint),
+		otlpmetrichttp.WithURLPath(cfg.Meter.Path),
+		otlpmetrichttp.WithHeaders(cfg.Headers),
 	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return exporter, nil
 }
 
 // newReader creates a new PeriodicReader for meter.
-// It takes a metric exporter and a Holder configuration as parameters.
+// It takes a metric exporter and a Meter configuration as parameters.
 // It returns a PeriodicReader configured with the specified export interval.
-func newReader(exporter metric.Exporter, opts *Options) *metric.PeriodicReader {
+func newReader(exporter metric.Exporter, cfg *config.Telemetry) *metric.PeriodicReader {
 	return metric.NewPeriodicReader(exporter,
-		metric.WithInterval(opts.ExportInterval),
+		metric.WithInterval(cfg.Meter.Scrape.Interval),
 	)
 }
 
 // newProvider creates a new MeterProvider for meter.
-// It takes a metric reader and a Holder configuration as parameters.
+// It takes a metric reader and a Meter configuration as parameters.
 // It returns a MeterProvider configured with the specified resource and reader.
-func newProvider(reader metric.Reader) *metric.MeterProvider {
-	resource := internal.GetResource()
-
+func newProvider(ctx context.Context, res *internal.Resource, reader metric.Reader) *metric.MeterProvider {
+	resource := internal.GetResource(ctx, res)
 	return metric.NewMeterProvider(
 		metric.WithResource(resource),
 		metric.WithReader(reader),

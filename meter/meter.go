@@ -17,3 +17,57 @@
  */
 
 package meter
+
+import (
+	"context"
+	"fmt"
+
+	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/pkg/errors"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	"go.opentelemetry.io/otel"
+)
+
+// Initialize sets up the Meter instance with the provided context, configuration, and resource.
+//
+// Parameters:
+// - ctx context.Context: The context to use for initialization.
+// - cfg *config.Telemetry: The telemetry configuration to be used.
+// - res *internal.Resource: The resource to be used.
+//
+// Returns:
+// - *Meter: The initialized Meter instance.
+// - error: An error if the initialization fails.
+func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resource) (*Meter, error) {
+	if !cfg.Enabled {
+		return nil, errors.ErrTelemetryNotEnabled
+	}
+
+	if !cfg.Meter.Enabled {
+		return nil, errors.ErrTelemetryMeterNotEnabled
+	}
+
+	holder := new(Meter)
+
+	// Create the exporter.
+	exporter, err := newExporter(ctx, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create metric exporter: %w", err)
+	}
+	holder.exporter = exporter
+
+	// Create the reader.
+	holder.reader = newReader(exporter, cfg)
+
+	// Create the provider.
+	holder.provider = newProvider(ctx, res, holder.reader)
+
+	// Set the global meter.
+	otel.SetMeterProvider(holder.provider)
+
+	// Run runtime collectors
+	_ = runtime.Start()
+
+	return holder, nil
+}
