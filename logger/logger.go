@@ -24,7 +24,6 @@ import (
 
 	"github.com/rs/zerolog"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/logger/drivers"
 	"go.globalso.dev/x/telemetry/logger/hooks"
 	custom "go.globalso.dev/x/telemetry/logger/zerolog"
@@ -32,19 +31,19 @@ import (
 	"go.opentelemetry.io/otel/log/global"
 )
 
-func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resource) (*Logger, error) {
-	if !cfg.Enabled {
+func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Logger, error) {
+	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	if !cfg.Logger.Enabled {
+	if !telemetry.Logger.Enabled {
 		return nil, errors.ErrTelemetryLoggerNotEnabled
 	}
 
 	holder := new(Logger)
 
 	// Create the exporter.
-	exporter, err := newExporter(ctx, cfg)
+	exporter, err := newExporter(ctx, telemetry)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log exporter: %w", err)
 	}
@@ -54,13 +53,13 @@ func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resour
 	holder.processor = newProcessor(ctx, exporter)
 
 	// Create the holder provider.
-	holder.provider = newLoggerProvider(ctx, res, holder.processor)
+	holder.provider = newLoggerProvider(ctx, telemetry.Resource, holder.processor)
 
 	// Set the global logger.
 	global.SetLoggerProvider(holder.provider)
 
 	// Get the writer driver.
-	driver, err := drivers.New(cfg.Logger.Drivers)
+	driver, err := drivers.New(telemetry.Logger.Drivers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log driver: %w", err)
 	}
@@ -69,12 +68,12 @@ func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resour
 	writer := WithCloser(driver, holder.Close)
 
 	// Parse level
-	level, err := zerolog.ParseLevel(cfg.Logger.Level)
+	level, err := zerolog.ParseLevel(telemetry.Logger.Level)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse log level: %w", err)
 	}
 
-	hook, err := hooks.New(cfg.Logger.Hooks)
+	hook, err := hooks.New(telemetry.Logger.Hooks)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log hook: %w", err)
 	}

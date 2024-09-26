@@ -21,7 +21,7 @@ func NewConsoleWriter() io.Writer {
 func NewFileWriter(path string) io.Writer {
 	_ = os.MkdirAll(path, os.ModePerm)
 	path = filepath.Join(path, time.Now().Format(FileNameTimeFormat))
-	file, _ := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+	file, _ := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644) //nolint: mnd // standard permission
 
 	return file
 }
