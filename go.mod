@@ -51,6 +51,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
+replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver => ../opentelemetry-collector-contrib/receiver/hostmetricsreceiver
+
 require (
 	cloud.google.com/go/compute/metadata v0.5.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.24.1 // indirect

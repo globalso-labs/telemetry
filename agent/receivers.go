@@ -31,14 +31,49 @@ import (
 // - telemetry *config.Telemetry: The telemetry configuration to be marshaled.
 //
 // Returns:
-// - map[string]interface{}: The marshaled receivers configuration.
+// - map[string]interface{}: The marshaled receivers' configuration.
 // - error: An error if the marshaling fails.
 func marshalReceivers(ctx context.Context, telemetry *config.Telemetry) map[string]interface{} {
 	receivers := make(map[string]interface{})
 
 	receivers["nop"] = marshalNOPReceiver(ctx, telemetry)
+	receivers["filelog"] = marshalFileLogReceiver(ctx, telemetry)
+	receivers["hostmetrics"] = marshalHostMetricsReceiver(ctx, telemetry)
 
 	return receivers
+}
+
+func marshalFileLogReceiver(_ context.Context, _ *config.Telemetry) map[string]interface{} {
+	receiver := make(map[string]interface{})
+
+	receiver["include"] = []string{"/var/log/**/*.log"}
+	receiver["storage"] = "file_storage"
+
+	return receiver
+}
+
+func marshalHostMetricsReceiver(_ context.Context, _ *config.Telemetry) map[string]interface{} {
+	receiver := make(map[string]interface{})
+
+	receiver["collection_interval"] = "5s"
+	receiver["scrapers"] = map[string]interface{}{
+		"cpu":  nil,
+		"disk": nil,
+		"load": map[string]interface{}{
+			"cpu_average": true,
+		},
+		"memory":    nil,
+		"network":   nil,
+		"processes": nil,
+		"process": map[string]interface{}{
+			"mute_process_name_error": true,
+			"mute_process_io_error":   true,
+			"mute_process_exe_error":  true,
+			"mute_process_cmd_error":  true,
+		},
+	}
+
+	return receiver
 }
 
 // marshalNOPReceiver marshals the NOP receiver configuration into a map.

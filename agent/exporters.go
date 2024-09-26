@@ -35,11 +35,20 @@ func marshalExporters(ctx context.Context, telemetry *config.Telemetry) (map[str
 	// 	return map[string]interface{}{"otlp": marshalGRPCExporter(ctx, telemetry)}, nil
 	case "http", "https":
 		exporters["otlphttp"] = marshalHTTPExporter(ctx, telemetry)
+		exporters["prometheusremotewrite"] = marshalPrometheusRemoteWriteExporter(ctx, telemetry)
 	default:
 		return nil, fmt.Errorf("unsupported protocol: %s", telemetry.Protocol)
 	}
 
 	return exporters, nil
+}
+
+func marshalPrometheusRemoteWriteExporter(_ context.Context, telemetry *config.Telemetry) map[string]interface{} {
+	var exporter = make(map[string]interface{})
+	exporter["endpoint"] = fmt.Sprintf("%s://%s/%s", telemetry.Protocol, telemetry.Endpoint, "api/v1/push")
+	exporter["headers"] = telemetry.Headers
+
+	return exporter
 }
 
 func marshalDebugExporter(_ context.Context, _ *config.Telemetry) map[string]interface{} {
@@ -53,7 +62,6 @@ func marshalHTTPExporter(_ context.Context, telemetry *config.Telemetry) map[str
 	var exporter = make(map[string]interface{})
 	exporter["logs_endpoint"] = fmt.Sprintf("%s://%s/%s", telemetry.Protocol, telemetry.Endpoint, telemetry.Logger.Path)
 	exporter["traces_endpoint"] = fmt.Sprintf("%s://%s/%s", telemetry.Protocol, telemetry.Endpoint, telemetry.Tracer.Path)
-	exporter["metrics_endpoint"] = fmt.Sprintf("%s://%s/%s", telemetry.Protocol, telemetry.Endpoint, telemetry.Meter.Path)
 	exporter["headers"] = telemetry.Headers
 
 	exporter["sending_queue"] = map[string]interface{}{

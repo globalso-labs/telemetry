@@ -25,7 +25,7 @@ telemetry:
     # The list of additional exporters that will be used to export telemetry data.
     exporters:
       prometheusremotewrite:
-        endpoint: "https://telemetry.idbi.pe/prometheus/api/v1/push"
+        endpoint: "https://telemetry.idbi.pe/api/v1/push"
         resource_to_telemetry_conversion:
           enabled: true
         headers:
@@ -68,9 +68,10 @@ telemetry:
                 enabled: true
               process.memory.utilization:
                 enabled: true
-#            mute_process_name_error: true
-#            mute_process_io_error: true
-#            mute_process_exe_error: true
+            mute_process_name_error: true
+            mute_process_io_error: true
+            mute_process_exe_error: true
+            mute_process_cmd_error: true
   # The config for the logging service . This config is used to send logs telemetry data.
   logger:
     # Whether the logger is enabled or not. If set to false, no logs will be sent to the remote server.
