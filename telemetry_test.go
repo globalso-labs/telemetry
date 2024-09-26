@@ -43,7 +43,7 @@ func TestInitialize(t *testing.T) {
 	require.NotNil(t, instance)
 
 	assert.Equal(t, config.Default(), instance.GetConfig())
-	assert.Nil(t, instance.GetConfig().Resource)
+	assert.Equal(t, internal.NewResource(), instance.GetConfig().Resource)
 }
 
 func TestInitializeWithConfig(t *testing.T) {
@@ -52,7 +52,8 @@ func TestInitializeWithConfig(t *testing.T) {
 	data, err := os.ReadFile("examples/telemetry.yaml")
 	require.Nil(t, err)
 
-	var c holder
+	c := holder{config.Default()}
+
 	err = yaml.Unmarshal(data, &c)
 	require.Nil(t, err)
 
@@ -60,7 +61,7 @@ func TestInitializeWithConfig(t *testing.T) {
 	require.NotNil(t, instance)
 	require.Nil(t, err)
 	assert.Equal(t, c.Telemetry, instance.GetConfig())
-	assert.Nil(t, instance.GetResource())
+	assert.Equal(t, c.Telemetry.Resource, instance.GetResource())
 
 	d, err := c.Telemetry.Dump()
 	require.Nil(t, err)
@@ -76,9 +77,12 @@ func TestInitializeWithResource(t *testing.T) {
 		internal.WithVersion(internal.Version),
 	)
 
+	expected := config.Default()
+	expected.Resource = r
+
 	instance, err := telemetry.Initialize(context.Background(), telemetry.WithResource(r))
 	require.Nil(t, err)
 	require.NotNil(t, instance)
-	assert.Equal(t, config.Default(), instance.GetConfig())
+	assert.Equal(t, expected, instance.GetConfig())
 	assert.Equal(t, r, instance.GetResource())
 }

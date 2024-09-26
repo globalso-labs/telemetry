@@ -24,7 +24,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/pkg/errors"
 	"go.globalso.dev/x/telemetry/tracer"
 )
@@ -35,7 +34,7 @@ func TestInitialize_Success(t *testing.T) {
 	ctx := context.Background()
 	cfg := config.Default()
 
-	tr, err := tracer.Initialize(ctx, cfg, internal.NewResource())
+	tr, err := tracer.Initialize(ctx, cfg)
 	defer tr.Shutdown(ctx)
 
 	assert.NoError(t, err)
@@ -64,7 +63,7 @@ func TestInitialize_TelemetryNotEnabled(t *testing.T) {
 		Tracer:  config.TracerDefault(),
 	}
 
-	tracerInstance, err := tracer.Initialize(ctx, cfg, internal.NewResource())
+	tracerInstance, err := tracer.Initialize(ctx, cfg)
 	assert.ErrorIs(t, err, errors.ErrTelemetryNotEnabled)
 	assert.Nil(t, tracerInstance)
 }
@@ -76,7 +75,7 @@ func TestInitialize_TracerNotEnabled(t *testing.T) {
 	cfg := config.Default()
 	cfg.Tracer.Disable()
 
-	tracerInstance, err := tracer.Initialize(ctx, cfg, internal.NewResource())
+	tracerInstance, err := tracer.Initialize(ctx, cfg)
 	assert.ErrorIs(t, err, errors.ErrTelemetryTracerNotEnabled)
 	assert.Nil(t, tracerInstance)
 }
