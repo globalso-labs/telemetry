@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/globalso-labs/telemetry/compare/v1.0.0...v1.1.0) (2024-09-26)
+
+
+### Features
+
+* add goreleaser configuration for multiple platforms ([770f254](https://github.com/globalso-labs/telemetry/commit/770f254e74c8e9cf69f4c19fdd2659a96beef084))
+
+
+### Bug Fixes
+
+* update golangci-lint installation command for overwrite safety ([5803477](https://github.com/globalso-labs/telemetry/commit/580347783acaca70fd5a821b7c251a65563527da))
+
 ## [1.0.0](https://github.com/globalso-labs/telemetry/compare/v0.6.0...v1.0.0) (2024-09-26)
 
 
