@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/globalso-labs/telemetry/compare/v1.1.0...v1.1.1) (2024-09-26)
+
+
+### Bug Fixes
+
+* update golangci-lint installation process ([e50f36c](https://github.com/globalso-labs/telemetry/commit/e50f36c4125f6ef39f43badd606a034e6ac2792a))
+
 ## [1.1.0](https://github.com/globalso-labs/telemetry/compare/v1.0.0...v1.1.0) (2024-09-26)
 
 
