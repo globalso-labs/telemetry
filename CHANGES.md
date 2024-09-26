@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.0](https://github.com/globalso-labs/telemetry/compare/v0.6.0...v1.0.0) (2024-09-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* The removal of the internal package from the logger initialization may impact other tests relying on it.
+* The telemetry configuration now requires the "x-scope-orgid" header.
+
+### Features
+
+* add default headers for telemetry configuration ([ce8d08f](https://github.com/globalso-labs/telemetry/commit/ce8d08f2637f5a4d1f43ceb7b053d2eb73307fb7))
+* add initial implementation of telemetry agent ([d143bf4](https://github.com/globalso-labs/telemetry/commit/d143bf48cb43dfb48861360da030b3e06e5bb360))
+* add resource management to Telemetry ([a2789e9](https://github.com/globalso-labs/telemetry/commit/a2789e94fb302abb5c4a24da78e0bd092673bf0f))
+* enhance Resource functionality ([b315539](https://github.com/globalso-labs/telemetry/commit/b315539c3ad3792bad496f53198d7d14599b21b3))
+* implement merge function for key/value map ([7d922d1](https://github.com/globalso-labs/telemetry/commit/7d922d1d77aa6da7cbbf791e20c24ce3f16fe63b))
+* update telemetry configuration and remove deprecated constants ([790d57a](https://github.com/globalso-labs/telemetry/commit/790d57a8a62522a9f4bdbba9979dde60d8727f99))
+* update telemetry initialization and lint configuration ([753d032](https://github.com/globalso-labs/telemetry/commit/753d032ea4a8e66dac5ba698c29dd9df1b032e17))
+
+
+### Code Refactoring
+
+* update logger_test to use assert package ([0c8b70a](https://github.com/globalso-labs/telemetry/commit/0c8b70a0a9815e98be7adb25efdbd2698bef709b))
+
 ## [0.6.0](https://github.com/globalso-labs/telemetry/compare/v0.5.0...v0.6.0) (2024-08-07)
 
 
