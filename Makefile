@@ -13,6 +13,9 @@ git-hooks:
 download: ## Downloads the dependencies
 	@go mod download
 
+update: ## Updates the dependencies
+	@go get $(go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all)
+
 tidy: ## Cleans up go.mod and go.sum
 	@go mod tidy
 
