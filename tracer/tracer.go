@@ -23,7 +23,6 @@ import (
 	"fmt"
 
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/pkg/errors"
 	"go.opentelemetry.io/otel"
 )
@@ -33,24 +32,23 @@ import (
 // Parameters:
 // - ctx context.Context: The context to use for initialization.
 // - cfg *config.Telemetry: The telemetry configuration to be used.
-// - res *internal.Resource: The resource to be used.
 //
 // Returns:
 // - *Tracer: The initialized Tracer instance.
 // - error: An error if the initialization fails.
-func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resource) (*Tracer, error) {
-	if !cfg.Enabled {
+func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Tracer, error) {
+	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	if !cfg.Tracer.Enabled {
+	if !telemetry.Tracer.Enabled {
 		return nil, errors.ErrTelemetryTracerNotEnabled
 	}
 
 	holder := new(Tracer)
 
 	// Create the exporter.
-	exporter, err := newExporter(ctx, cfg)
+	exporter, err := newExporter(ctx, telemetry)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
 	}
@@ -60,7 +58,7 @@ func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resour
 	holder.processor = newProcessor(ctx, exporter)
 
 	// Create the provider.
-	holder.provider = newProvider(ctx, res, holder.processor)
+	holder.provider = newProvider(ctx, telemetry.Resource, holder.processor)
 
 	// Set the global provider.
 	otel.SetTracerProvider(holder.provider)
