@@ -20,16 +20,18 @@ package config
 
 import (
 	"go.globalso.dev/x/telemetry/constants"
+	"go.globalso.dev/x/telemetry/internal"
 )
 
+// Default initializes and returns a default Telemetry configuration.
+// The configuration includes default values for various telemetry settings
+// such as Endpoint, Protocol, Headers, Scrape, Push, Agent, Logger, Meter, and Tracer.
 func Default() *Telemetry {
 	t := &Telemetry{
 		Enabled:  true,
 		Endpoint: constants.Endpoint,
 		Protocol: constants.Protocol,
-		Headers: Headers{
-			constants.ScopeOrgID: constants.OrganizationID,
-		},
+		Headers:  Headers{},
 		Scrape: Scrape{
 			Interval: constants.ScrapeInterval,
 		},
@@ -37,12 +39,17 @@ func Default() *Telemetry {
 			Interval: constants.PushInterval,
 		},
 		Agent: Agent{
-			Enabled:   false,
-			Receivers: nil,
+			Extensions: map[string]interface{}{},
+			Exporters:  map[string]interface{}{},
+			Receivers:  map[string]interface{}{},
+			Processors: map[string]interface{}{},
+			Service:    map[string]interface{}{},
 		},
 		Logger: LoggerDefault(),
 		Meter:  MeterDefault(),
 		Tracer: TracerDefault(),
+
+		Resource: internal.NewResource(),
 	}
 
 	t.Enable()

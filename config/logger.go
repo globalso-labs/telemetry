@@ -24,12 +24,12 @@ import (
 )
 
 type Logger struct {
-	Enabled bool     `yaml:"enabled" json:"enabled,omitempty"`
-	Path    string   `yaml:"path" json:"path,omitempty"`
-	Level   string   `yaml:"level" json:"level,omitempty"`
-	Drivers []string `yaml:"drivers" json:"drivers,omitempty"`
-	Hooks   []string `yaml:"hooks" json:"hooks,omitempty"`
-	Push    Push     `yaml:"push" json:"push"`
+	Enabled bool     `yaml:"enabled"`
+	Path    string   `yaml:"path"`
+	Level   string   `yaml:"level"`
+	Drivers []string `yaml:"drivers"`
+	Hooks   []string `yaml:"hooks"`
+	Push    Push     `yaml:"push"`
 }
 
 func (l *Logger) Enable() {

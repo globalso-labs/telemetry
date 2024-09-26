@@ -18,7 +18,16 @@
 
 package config
 
+import "gopkg.in/yaml.v3"
+
 type Agent struct {
-	Enabled   bool `yaml:"enabled"`
-	Receivers any  `yaml:"receivers"`
+	Extensions map[string]interface{} `yaml:"extensions"`
+	Exporters  map[string]interface{} `yaml:"exporters"`
+	Receivers  map[string]interface{} `yaml:"receivers"`
+	Processors map[string]interface{} `yaml:"processors"`
+	Service    map[string]interface{} `yaml:"service"`
+}
+
+func (a *Agent) Dump() ([]byte, error) {
+	return yaml.Marshal(a)
 }
