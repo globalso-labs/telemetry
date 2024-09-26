@@ -1,9 +1,9 @@
 /*
  * telemetry
- * tracer.go
+ * meter.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Wed, 18 Sep 2024 00:00:25 -0500 by nick.
+ * Last modified at Tue, 17 Sep 2024 22:46:10 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package tracer
+package meter
 
 import (
 	"context"
@@ -24,44 +24,49 @@ import (
 
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/pkg/errors"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 )
 
-// Initialize sets up the Tracer instance with the provided context, configuration, and resource.
+// Initialize sets up the Meter instance with the provided context, configuration, and resource.
 //
 // Parameters:
 // - ctx context.Context: The context to use for initialization.
 // - cfg *config.Telemetry: The telemetry configuration to be used.
+// - res *internal.Resource: The resource to be used.
 //
 // Returns:
-// - *Tracer: The initialized Tracer instance.
+// - *Meter: The initialized Meter instance.
 // - error: An error if the initialization fails.
-func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Tracer, error) {
+func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Meter, error) {
 	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	if !telemetry.Tracer.Enabled {
-		return nil, errors.ErrTelemetryTracerNotEnabled
+	if !telemetry.Meter.Enabled {
+		return nil, errors.ErrTelemetryMeterNotEnabled
 	}
 
-	holder := new(Tracer)
+	holder := new(Meter)
 
 	// Create the exporter.
 	exporter, err := newExporter(ctx, telemetry)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create trace exporter: %w", err)
+		return nil, fmt.Errorf("failed to create metric exporter: %w", err)
 	}
 	holder.exporter = exporter
 
-	// Create the processor.
-	holder.processor = newProcessor(ctx, exporter)
+	// Create the reader.
+	holder.reader = newReader(ctx, exporter, telemetry)
 
 	// Create the provider.
-	holder.provider = newProvider(ctx, telemetry.Resource, holder.processor)
+	holder.provider = newProvider(ctx, telemetry.Resource, holder.reader)
 
-	// Set the global provider.
-	otel.SetTracerProvider(holder.provider)
+	// Set the global meter.
+	otel.SetMeterProvider(holder.provider)
+
+	// Run runtime collectors
+	_ = runtime.Start()
 
 	return holder, nil
 }

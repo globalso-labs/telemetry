@@ -3,7 +3,7 @@
  * resource.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 9 Jul 2024 00:25:06 -0500 by nick.
+ * Last modified at Sat, 14 Sep 2024 21:35:27 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -19,19 +19,111 @@
 package internal
 
 import (
-	"go.globalso.dev/x/telemetry/common"
-	"go.opentelemetry.io/otel/sdk/resource"
-
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
+	"github.com/denisbrodbeck/machineid"
 )
 
-// GetResource returns the service resource.
-func GetResource() *resource.Resource {
-	attrs := resource.Default().Attributes()
-	attrs = append(attrs, semconv.ServiceInstanceIDKey.String(common.ID()))
-	attrs = append(attrs, semconv.ServiceNameKey.String(common.Name()))
-	attrs = append(attrs, semconv.ServiceNamespaceKey.String(common.Namespace()))
-	attrs = append(attrs, semconv.ServiceVersionKey.String(common.Version()))
+// Option is a function type that modifies a Resource.
+type Option func(*Resource)
 
-	return resource.NewWithAttributes(semconv.SchemaURL, attrs...)
+// Resource represents a telemetry resource with an ID, name, namespace, and version.
+type Resource struct {
+	id        string
+	name      string
+	namespace string
+	version   string
+}
+
+// GetID returns the ID of the Resource.
+//
+// Returns:
+// - string: The ID of the Resource.
+func (r *Resource) GetID() string {
+	return r.id
+}
+
+// GetName returns the name of the Resource.
+//
+// Returns:
+// - string: The name of the Resource.
+func (r *Resource) GetName() string {
+	return r.name
+}
+
+// GetNamespace returns the namespace of the Resource.
+//
+// Returns:
+// - string: The namespace of the Resource.
+func (r *Resource) GetNamespace() string {
+	return r.namespace
+}
+
+// GetVersion returns the version of the Resource.
+//
+// Returns:
+// - string: The version of the Resource.
+func (r *Resource) GetVersion() string {
+	return r.version
+}
+
+// WithName sets the name of the Resource.
+//
+// Parameters:
+// - name string: The name to set.
+//
+// Returns:
+// - Option: An Option function that sets the name of the Resource.
+func WithName(name string) Option {
+	return func(r *Resource) {
+		r.name = name
+	}
+}
+
+// WithNamespace sets the namespace of the Resource.
+//
+// Parameters:
+// - namespace string: The namespace to set.
+//
+// Returns:
+// - Option: An Option function that sets the namespace of the Resource.
+func WithNamespace(namespace string) Option {
+	return func(r *Resource) {
+		r.namespace = namespace
+	}
+}
+
+// WithVersion sets the version of the Resource.
+//
+// Parameters:
+// - version string: The version to set.
+//
+// Returns:
+// - Option: An Option function that sets the version of the Resource.
+func WithVersion(version string) Option {
+	return func(r *Resource) {
+		r.version = version
+	}
+}
+
+// NewResource creates a new Resource with the provided options.
+//
+// Parameters:
+// - opts ...Option: A variadic list of Option functions to configure the Resource.
+//
+// Returns:
+// - *Resource: A pointer to the newly created Resource.
+func NewResource(opts ...Option) *Resource {
+	var m, _ = machineid.ID()
+
+	r := &Resource{
+		id:        m,
+		name:      "unknown",
+		namespace: "default",
+		version:   Version,
+	}
+
+	for _, opt := range opts {
+		opt(r)
+	}
+
+	return r
 }

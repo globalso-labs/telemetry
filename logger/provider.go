@@ -20,54 +20,24 @@ package logger
 
 import (
 	"context"
-	"fmt"
 
+	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
-	"go.globalso.dev/x/telemetry/internal/constants"
-	"go.globalso.dev/x/telemetry/pkg/errors"
-
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/sdk/log"
 )
 
-type Holder struct {
+type Logger struct {
 	provider  *log.LoggerProvider
 	processor log.Processor
 	exporter  log.Exporter
 }
 
-func NewLogger(ctx context.Context, config *Options) (*Holder, error) {
-	if !config.IsEnabled() {
-		return nil, errors.ErrTelemetryLogsNotEnabled
-	}
-
-	holder := new(Holder)
-
-	// Create the exporter.
-	exporter, err := newExporter(ctx, config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create log exporter: %w", err)
-	}
-	holder.exporter = exporter
-
-	// Create the processor.
-	holder.processor = newProcessor(exporter)
-
-	// Create the holder provider.
-	holder.provider = newLoggerProvider(holder.processor)
-
-	return holder, nil
-}
-
-func (l *Holder) Provider() *log.LoggerProvider {
+func (l *Logger) Provider() *log.LoggerProvider {
 	return l.provider
 }
 
-func (l *Holder) Shutdown(ctx context.Context) error {
-	if err := l.provider.Shutdown(ctx); err != nil {
-		return err
-	}
-
+func (l *Logger) Shutdown(ctx context.Context) error {
 	if err := l.processor.Shutdown(ctx); err != nil {
 		return err
 	}
@@ -75,40 +45,34 @@ func (l *Holder) Shutdown(ctx context.Context) error {
 	if err := l.exporter.Shutdown(ctx); err != nil {
 		return err
 	}
+	if err := l.provider.Shutdown(ctx); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (l *Holder) Close() error {
+func (l *Logger) Close() error {
 	ctx := context.Background()
-	return _handler.Shutdown(ctx)
+	return l.Shutdown(ctx)
 }
 
-func newExporter(ctx context.Context, _ *Options) (*otlploghttp.Exporter, error) {
-	headers := internal.GetHeaders()
-
-	exporter, err := otlploghttp.New(ctx,
-		otlploghttp.WithEndpoint(constants.TelemetryEndpoint),
-		otlploghttp.WithURLPath(constants.TelemetryLogsPath),
-		otlploghttp.WithHeaders(headers),
+func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlploghttp.Exporter, error) {
+	return otlploghttp.New(ctx,
+		otlploghttp.WithEndpoint(cfg.Endpoint),
+		otlploghttp.WithURLPath(cfg.Logger.Path),
+		otlploghttp.WithHeaders(cfg.Headers),
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	return exporter, nil
 }
 
-func newProcessor(exporter *otlploghttp.Exporter) *log.BatchProcessor {
+func newProcessor(_ context.Context, exporter *otlploghttp.Exporter) *log.BatchProcessor {
 	return log.NewBatchProcessor(exporter)
 }
 
-func newLoggerProvider(processor log.Processor) *log.LoggerProvider {
-	resource := internal.GetResource()
-	loggerProvider := log.NewLoggerProvider(
+func newLoggerProvider(ctx context.Context, res *internal.Resource, processor log.Processor) *log.LoggerProvider {
+	resource := internal.GetResource(ctx, res)
+	return log.NewLoggerProvider(
 		log.WithResource(resource),
 		log.WithProcessor(processor),
 	)
-
-	return loggerProvider
 }
