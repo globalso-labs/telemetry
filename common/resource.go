@@ -117,8 +117,8 @@ func NewResource(opts ...Option) *Resource {
 
 	r := &Resource{
 		id:        m,
-		name:      "unknown",
-		namespace: "default",
+		name:      UnknownServiceName,
+		namespace: UnknownServiceNamespace,
 		version:   internal.Version,
 	}
 
