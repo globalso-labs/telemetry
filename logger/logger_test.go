@@ -23,24 +23,24 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/logger"
 )
 
 func TestInitialize(t *testing.T) {
 	t.Parallel()
 
-	h, err := logger.Initialize(context.Background(), config.Default(), internal.NewResource())
+	h, err := logger.Initialize(context.Background(), config.Default())
 	require.Nil(t, err)
 	require.NotNil(t, h)
 
 	buffer := new(bytes.Buffer)
 	l := logger.Ctx(context.Background()).Output(buffer).With().Logger()
 	l.Info().Msg("test")
-	require.Contains(t, buffer.String(), "test")
+	assert.Contains(t, buffer.String(), "test")
 
 	err = h.Shutdown(context.Background())
-	require.Nil(t, err)
+	assert.Nil(t, err)
 }
