@@ -196,3 +196,5 @@ bin/
 
 # Ignore the logs directory
 logs/
+
+dist/
