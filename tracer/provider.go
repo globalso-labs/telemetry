@@ -62,7 +62,7 @@ func newExporter(ctx context.Context, cfg *config.Telemetry) (*otlptrace.Exporte
 	)
 }
 
-func newProcessor(_ context.Context, exporter *otlptrace.Exporter) trace.SpanProcessor { //nolint:ireturn
+func newProcessor(_ context.Context, exporter *otlptrace.Exporter) trace.SpanProcessor { //nolint: ireturn
 	return trace.NewBatchSpanProcessor(exporter)
 }
 
