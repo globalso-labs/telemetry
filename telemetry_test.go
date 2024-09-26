@@ -38,11 +38,12 @@ type holder struct {
 func TestInitialize(t *testing.T) {
 	t.Parallel()
 
-	instance := telemetry.Initialize(context.Background())
+	instance, err := telemetry.Initialize(context.Background())
+	require.Nil(t, err)
 	require.NotNil(t, instance)
 
 	assert.Equal(t, config.Default(), instance.GetConfig())
-	assert.Nil(t, instance.GetResource())
+	assert.Nil(t, instance.GetConfig().Resource)
 }
 
 func TestInitializeWithConfig(t *testing.T) {
@@ -55,8 +56,9 @@ func TestInitializeWithConfig(t *testing.T) {
 	err = yaml.Unmarshal(data, &c)
 	require.Nil(t, err)
 
-	instance := telemetry.Initialize(context.Background(), telemetry.WithConfig(c.Telemetry))
+	instance, err := telemetry.Initialize(context.Background(), telemetry.WithConfig(c.Telemetry))
 	require.NotNil(t, instance)
+	require.Nil(t, err)
 	assert.Equal(t, c.Telemetry, instance.GetConfig())
 	assert.Nil(t, instance.GetResource())
 
@@ -74,7 +76,8 @@ func TestInitializeWithResource(t *testing.T) {
 		internal.WithVersion(internal.Version),
 	)
 
-	instance := telemetry.Initialize(context.Background(), telemetry.WithResource(r))
+	instance, err := telemetry.Initialize(context.Background(), telemetry.WithResource(r))
+	require.Nil(t, err)
 	require.NotNil(t, instance)
 	assert.Equal(t, config.Default(), instance.GetConfig())
 	assert.Equal(t, r, instance.GetResource())

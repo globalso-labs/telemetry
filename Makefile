@@ -1,8 +1,6 @@
 SHELL=/bin/bash -e -o pipefail
 PWD = $(shell pwd)
 
-# constants
-GOLANGCI_VERSION = 1.55.1
 
 all: git-hooks tidy ## Initializes all tools
 
@@ -21,17 +19,8 @@ tidy: ## Cleans up go.mod and go.sum
 imports: bin/goimports
 	@bin/goimports -w -l .
 
-run: imports  ## Run the app
-	 go build -o ./out/main main.go && ./out/main run -c examples/config.yml --debug -vvv
-
-migrate: imports  ## Run the app
-	 @go build  -o "out/bin/main" main.go && ./out/bin/main migrate -c examples/config.yml -vvv --debug
-
-drop: imports  ## Run the app
-	 @go build  -o "out/bin/main" main.go && ./out/bin/main migrate -c examples/config.yml --drop -vvv --debug
-
-live: bin/air
-	@bin/air --build.cmd="go build -o ./out/bin/main ./cmd/*.go" --build.bin="./out/bin/main -vvv"
+agent: imports  ## Run the app
+	 CGO_ENABLED=1 go build -ldflags "-s -w" -o ./agent/out/agent agent/cmd/*.go && ./agent/out/agent --config examples/telemetry.yaml
 
 test-build: ## Tests whether the code compiles
 	@go build -o /dev/null ./...
@@ -43,9 +32,9 @@ GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)" ./...
 out/bin:
 	$(GO_BUILD)
 
-GOLANGCI_LINT = bin/golangci-lint-$(GOLANGCI_VERSION)
+GOLANGCI_LINT = bin/golangci-lint
 $(GOLANGCI_LINT):
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b bin v$(GOLANGCI_VERSION)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b bin
 	@mv bin/golangci-lint "$(@)"
 
 lint: imports $(GOLANGCI_LINT) download ## Lints all code with golangci-lint

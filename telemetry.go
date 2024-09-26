@@ -22,16 +22,14 @@ import (
 	"context"
 
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/meter"
 	"go.globalso.dev/x/telemetry/tracer"
 )
 
 type Telemetry struct {
-	ctx      context.Context
-	config   *config.Telemetry
-	resource *internal.Resource
+	ctx    context.Context
+	config *config.Telemetry
 
 	logger *logger.Logger
 	tracer *tracer.Tracer
@@ -42,23 +40,37 @@ func (t *Telemetry) GetConfig() *config.Telemetry {
 	return t.config
 }
 
-func (t *Telemetry) GetResource() *internal.Resource {
-	return t.resource
-}
-
 func newTelemetry(ctx context.Context) *Telemetry {
 	return &Telemetry{
-		ctx:      ctx,
-		config:   config.Default(),
-		resource: nil,
+		ctx:    ctx,
+		config: config.Default(),
+		logger: nil,
+		tracer: nil,
+		meter:  nil,
 	}
 }
 
-func Initialize(ctx context.Context, opts ...Option) *Telemetry {
+func Initialize(ctx context.Context, opts ...Option) (*Telemetry, error) {
 	t := newTelemetry(ctx)
 	for _, opt := range opts {
 		opt(t)
 	}
 
-	return t
+	var err error
+	t.logger, err = logger.Initialize(t.ctx, t.config)
+	if err != nil {
+		return nil, err
+	}
+
+	t.tracer, err = tracer.Initialize(t.ctx, t.config)
+	if err != nil {
+		return nil, err
+	}
+
+	t.meter, err = meter.Initialize(t.ctx, t.config)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
 }
