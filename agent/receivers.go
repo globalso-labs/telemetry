@@ -55,7 +55,7 @@ func marshalFileLogReceiver(_ context.Context, _ *config.Telemetry) map[string]i
 func marshalHostMetricsReceiver(_ context.Context, _ *config.Telemetry) map[string]interface{} {
 	receiver := make(map[string]interface{})
 
-	receiver["collection_interval"] = "5s"
+	receiver["collection_interval"] = "30s"
 	receiver["scrapers"] = map[string]interface{}{
 		"cpu":  nil,
 		"disk": nil,
@@ -70,6 +70,11 @@ func marshalHostMetricsReceiver(_ context.Context, _ *config.Telemetry) map[stri
 			"mute_process_io_error":   true,
 			"mute_process_exe_error":  true,
 			"mute_process_cmd_error":  true,
+			"metrics": map[string]interface{}{
+				"process.cpu.utilization":    map[string]interface{}{"enabled": true},
+				"process.disk.operations":    map[string]interface{}{"enabled": true},
+				"process.memory.utilization": map[string]interface{}{"enabled": true},
+			},
 		},
 	}
 

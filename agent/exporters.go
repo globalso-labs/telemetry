@@ -46,6 +46,9 @@ func marshalExporters(ctx context.Context, telemetry *config.Telemetry) (map[str
 func marshalPrometheusRemoteWriteExporter(_ context.Context, telemetry *config.Telemetry) map[string]interface{} {
 	var exporter = make(map[string]interface{})
 	exporter["endpoint"] = fmt.Sprintf("%s://%s/%s", telemetry.Protocol, telemetry.Endpoint, "api/v1/push")
+	exporter["resource_to_telemetry_conversion"] = map[string]interface{}{
+		"enabled": true,
+	}
 	exporter["headers"] = telemetry.Headers
 
 	return exporter
