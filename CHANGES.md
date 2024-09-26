@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0](https://github.com/globalso-labs/telemetry/compare/v1.1.1...v1.2.0) (2024-09-26)
+
+
+### Features
+
+* add constants for service names and update resource initialization ([8a8e012](https://github.com/globalso-labs/telemetry/commit/8a8e0129acf201416799b7961ae7961c0a2e858e))
+* add Prometheus Remote Write exporter and new receivers ([6783c4d](https://github.com/globalso-labs/telemetry/commit/6783c4dac5eba3e89fc50b05a2914568548cfe8e))
+* add update command to manage dependencies ([ee11eaa](https://github.com/globalso-labs/telemetry/commit/ee11eaa6a03e25fb281768d8a63c6dcd71a73ae6))
+* enhance telemetry configuration ([3c89f58](https://github.com/globalso-labs/telemetry/commit/3c89f589fe50158102812b6c4798fc1bb948303f))
+
 ## [1.1.1](https://github.com/globalso-labs/telemetry/compare/v1.1.0...v1.1.1) (2024-09-26)
 
 
