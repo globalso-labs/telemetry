@@ -23,7 +23,6 @@ import (
 	"fmt"
 
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/pkg/errors"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
@@ -39,29 +38,29 @@ import (
 // Returns:
 // - *Meter: The initialized Meter instance.
 // - error: An error if the initialization fails.
-func Initialize(ctx context.Context, cfg *config.Telemetry, res *internal.Resource) (*Meter, error) {
-	if !cfg.Enabled {
+func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Meter, error) {
+	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	if !cfg.Meter.Enabled {
+	if !telemetry.Meter.Enabled {
 		return nil, errors.ErrTelemetryMeterNotEnabled
 	}
 
 	holder := new(Meter)
 
 	// Create the exporter.
-	exporter, err := newExporter(ctx, cfg)
+	exporter, err := newExporter(ctx, telemetry)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create metric exporter: %w", err)
 	}
 	holder.exporter = exporter
 
 	// Create the reader.
-	holder.reader = newReader(ctx, exporter, cfg)
+	holder.reader = newReader(ctx, exporter, telemetry)
 
 	// Create the provider.
-	holder.provider = newProvider(ctx, res, holder.reader)
+	holder.provider = newProvider(ctx, telemetry.Resource, holder.reader)
 
 	// Set the global meter.
 	otel.SetMeterProvider(holder.provider)
