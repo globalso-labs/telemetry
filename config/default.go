@@ -31,7 +31,9 @@ func Default() *Telemetry {
 		Enabled:  true,
 		Endpoint: constants.Endpoint,
 		Protocol: constants.Protocol,
-		Headers:  Headers{},
+		Headers: Headers{
+			"x-scope-orgid": "anonymous",
+		},
 		Scrape: Scrape{
 			Interval: constants.ScrapeInterval,
 		},
