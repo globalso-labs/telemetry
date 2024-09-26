@@ -29,5 +29,3 @@ const TracePath = "otlp/v1/traces"
 
 const ScrapeInterval = 5 * time.Second
 const PushInterval = 30 * time.Second
-
-const OrganizationID = "anonymous"
