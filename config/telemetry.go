@@ -19,7 +19,7 @@
 package config
 
 import (
-	"go.globalso.dev/x/telemetry/internal"
+	"go.globalso.dev/x/telemetry/common"
 	"gopkg.in/yaml.v2"
 )
 
@@ -35,7 +35,7 @@ type Telemetry struct {
 	Meter    Meter   `yaml:"meter"`
 	Tracer   Tracer  `yaml:"tracer"`
 
-	Resource *internal.Resource `yaml:"-"`
+	Resource *common.Resource `yaml:"-"`
 }
 
 // Enable activates the telemetry and its associated components (Agent, Logger, Meter, Tracer).

@@ -1,9 +1,9 @@
 /*
  * telemetry
- * parse.go
+ * parser.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Sat, 14 Sep 2024 21:35:27 -0500 by nick.
+ * Last modified at Wed, 25 Sep 2024 21:28:24 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package internal
+package common
 
 import (
 	"context"

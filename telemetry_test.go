@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.globalso.dev/x/telemetry"
+	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
 	"gopkg.in/yaml.v3"
@@ -43,7 +44,7 @@ func TestInitialize(t *testing.T) {
 	require.NotNil(t, instance)
 
 	assert.Equal(t, config.Default(), instance.GetConfig())
-	assert.Equal(t, internal.NewResource(), instance.GetConfig().Resource)
+	assert.Equal(t, common.NewResource(), instance.GetConfig().Resource)
 }
 
 func TestInitializeWithConfig(t *testing.T) {
@@ -71,10 +72,10 @@ func TestInitializeWithConfig(t *testing.T) {
 func TestInitializeWithResource(t *testing.T) {
 	t.Parallel()
 
-	r := internal.NewResource(
-		internal.WithNamespace("namespace"),
-		internal.WithName("name"),
-		internal.WithVersion(internal.Version),
+	r := common.NewResource(
+		common.WithNamespace("namespace"),
+		common.WithName("name"),
+		common.WithVersion(internal.Version),
 	)
 
 	expected := config.Default()

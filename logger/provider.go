@@ -21,8 +21,8 @@ package logger
 import (
 	"context"
 
+	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/sdk/log"
 )
@@ -69,8 +69,8 @@ func newProcessor(_ context.Context, exporter *otlploghttp.Exporter) *log.BatchP
 	return log.NewBatchProcessor(exporter)
 }
 
-func newLoggerProvider(ctx context.Context, res *internal.Resource, processor log.Processor) *log.LoggerProvider {
-	resource := internal.GetResource(ctx, res)
+func newLoggerProvider(ctx context.Context, res *common.Resource, processor log.Processor) *log.LoggerProvider {
+	resource := common.GetResource(ctx, res)
 	return log.NewLoggerProvider(
 		log.WithResource(resource),
 		log.WithProcessor(processor),

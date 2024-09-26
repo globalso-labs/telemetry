@@ -21,8 +21,8 @@ package tracer
 import (
 	"context"
 
+	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -66,8 +66,8 @@ func newProcessor(_ context.Context, exporter *otlptrace.Exporter) trace.SpanPro
 	return trace.NewBatchSpanProcessor(exporter)
 }
 
-func newProvider(ctx context.Context, res *internal.Resource, processor trace.SpanProcessor) *trace.TracerProvider {
-	resource := internal.GetResource(ctx, res)
+func newProvider(ctx context.Context, res *common.Resource, processor trace.SpanProcessor) *trace.TracerProvider {
+	resource := common.GetResource(ctx, res)
 	return trace.NewTracerProvider(
 		trace.WithResource(resource),
 		trace.WithSpanProcessor(processor),

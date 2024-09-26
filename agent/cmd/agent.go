@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"go.globalso.dev/x/telemetry"
 	"go.globalso.dev/x/telemetry/agent"
+	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
 )
@@ -26,9 +27,9 @@ and exports telemetry data. It is a component of the OpenTelemetry project.`,
 				return fmt.Errorf("failed to unmarshal telemetry configuration: %w", err)
 			}
 
-			initial.Resource = internal.NewResource(
-				internal.WithName("agent"),
-				internal.WithVersion(internal.Version),
+			initial.Resource = common.NewResource(
+				common.WithName("agent"),
+				common.WithVersion(internal.Version),
 			)
 			var _, err = telemetry.Initialize(cmd.Context(), telemetry.WithConfig(initial))
 			if err != nil {
