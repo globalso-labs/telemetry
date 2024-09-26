@@ -20,6 +20,7 @@ package telemetry
 
 import (
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/internal"
 	"go.globalso.dev/x/telemetry/logger"
 )
 
@@ -49,5 +50,18 @@ func WithLogger(logger *logger.Logger) Option {
 func WithConfig(config *config.Telemetry) Option {
 	return func(t *Telemetry) {
 		t.config = config
+	}
+}
+
+// WithResource sets the resource for the Telemetry instance.
+//
+// Parameters:
+// - resource *internal.Resource: The resource to be used.
+//
+// Returns:
+// - Option: A function that sets the resource for the Telemetry instance.
+func WithResource(resource *internal.Resource) Option {
+	return func(t *Telemetry) {
+		t.config.Resource = resource
 	}
 }
