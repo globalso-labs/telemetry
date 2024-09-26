@@ -22,8 +22,10 @@ import (
 	"github.com/denisbrodbeck/machineid"
 )
 
+// Option is a function type that modifies a Resource.
 type Option func(*Resource)
 
+// Resource represents a telemetry resource with an ID, name, namespace, and version.
 type Resource struct {
 	id        string
 	name      string
@@ -31,55 +33,94 @@ type Resource struct {
 	version   string
 }
 
+// GetID returns the ID of the Resource.
+//
+// Returns:
+// - string: The ID of the Resource.
 func (r *Resource) GetID() string {
-	if r.id == "" {
-		m, _ := machineid.ID()
-		r.id = m
-	}
-
 	return r.id
 }
 
+// GetName returns the name of the Resource.
+//
+// Returns:
+// - string: The name of the Resource.
 func (r *Resource) GetName() string {
-	if r.name == "" {
-		r.name = "unknown"
-	}
-
 	return r.name
 }
 
+// GetNamespace returns the namespace of the Resource.
+//
+// Returns:
+// - string: The namespace of the Resource.
 func (r *Resource) GetNamespace() string {
-	if r.namespace == "" {
-		r.namespace = "default"
-	}
-
 	return r.namespace
 }
 
+// GetVersion returns the version of the Resource.
+//
+// Returns:
+// - string: The version of the Resource.
 func (r *Resource) GetVersion() string {
 	return r.version
 }
 
+// WithName sets the name of the Resource.
+//
+// Parameters:
+// - name string: The name to set.
+//
+// Returns:
+// - Option: An Option function that sets the name of the Resource.
 func WithName(name string) Option {
 	return func(r *Resource) {
 		r.name = name
 	}
 }
 
+// WithNamespace sets the namespace of the Resource.
+//
+// Parameters:
+// - namespace string: The namespace to set.
+//
+// Returns:
+// - Option: An Option function that sets the namespace of the Resource.
 func WithNamespace(namespace string) Option {
 	return func(r *Resource) {
 		r.namespace = namespace
 	}
 }
 
+// WithVersion sets the version of the Resource.
+//
+// Parameters:
+// - version string: The version to set.
+//
+// Returns:
+// - Option: An Option function that sets the version of the Resource.
 func WithVersion(version string) Option {
 	return func(r *Resource) {
 		r.version = version
 	}
 }
 
+// NewResource creates a new Resource with the provided options.
+//
+// Parameters:
+// - opts ...Option: A variadic list of Option functions to configure the Resource.
+//
+// Returns:
+// - *Resource: A pointer to the newly created Resource.
 func NewResource(opts ...Option) *Resource {
-	r := new(Resource)
+	var m, _ = machineid.ID()
+
+	r := &Resource{
+		id:        m,
+		name:      "unknown",
+		namespace: "default",
+		version:   Version,
+	}
+
 	for _, opt := range opts {
 		opt(r)
 	}
