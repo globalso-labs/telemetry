@@ -19,6 +19,7 @@
 package config
 
 import (
+	"go.globalso.dev/x/telemetry/internal"
 	"gopkg.in/yaml.v2"
 )
 
@@ -33,12 +34,13 @@ type Telemetry struct {
 	Logger   Logger  `yaml:"logger"`
 	Meter    Meter   `yaml:"meter"`
 	Tracer   Tracer  `yaml:"tracer"`
+
+	Resource *internal.Resource `yaml:"-"`
 }
 
 // Enable activates the telemetry and its associated components (Agent, Logger, Meter, Tracer).
 func (t *Telemetry) Enable() {
 	t.Enabled = true
-	t.Agent.Enabled = true
 	t.Logger.Enabled = true
 	t.Meter.Enabled = true
 	t.Tracer.Enabled = true
@@ -49,7 +51,6 @@ func (t *Telemetry) Disable() {
 	t.Tracer.Enabled = false
 	t.Meter.Enabled = false
 	t.Logger.Enabled = false
-	t.Agent.Enabled = false
 	t.Enabled = false
 }
 
