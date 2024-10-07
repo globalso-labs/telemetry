@@ -18,7 +18,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	go.mau.fi/zerozap v0.1.1
-	go.opentelemetry.io/collector/component v0.110.0
+	go.opentelemetry.io/collector/component v0.111.0
 	go.opentelemetry.io/collector/confmap v1.16.0
 	go.opentelemetry.io/collector/confmap/provider/yamlprovider v0.110.0
 	go.opentelemetry.io/collector/connector v0.110.0
@@ -26,7 +26,7 @@ require (
 	go.opentelemetry.io/collector/exporter v0.110.0
 	go.opentelemetry.io/collector/exporter/debugexporter v0.110.0
 	go.opentelemetry.io/collector/exporter/otlphttpexporter v0.110.0
-	go.opentelemetry.io/collector/extension v0.110.0
+	go.opentelemetry.io/collector/extension v0.111.0
 	go.opentelemetry.io/collector/otelcol v0.110.0
 	go.opentelemetry.io/collector/processor v0.110.0
 	go.opentelemetry.io/collector/processor/batchprocessor v0.110.0
@@ -201,7 +201,7 @@ require (
 	go.opentelemetry.io/collector/config/confighttp v0.110.0 // indirect
 	go.opentelemetry.io/collector/config/configopaque v1.16.0 // indirect
 	go.opentelemetry.io/collector/config/configretry v1.16.0 // indirect
-	go.opentelemetry.io/collector/config/configtelemetry v0.110.0 // indirect
+	go.opentelemetry.io/collector/config/configtelemetry v0.111.0 // indirect
 	go.opentelemetry.io/collector/config/configtls v1.16.0 // indirect
 	go.opentelemetry.io/collector/config/internal v0.110.0 // indirect
 	go.opentelemetry.io/collector/connector/connectorprofiles v0.110.0 // indirect
@@ -216,7 +216,7 @@ require (
 	go.opentelemetry.io/collector/filter v0.110.0 // indirect
 	go.opentelemetry.io/collector/internal/globalgates v0.110.0 // indirect
 	go.opentelemetry.io/collector/internal/globalsignal v0.110.0 // indirect
-	go.opentelemetry.io/collector/pdata v1.16.0 // indirect
+	go.opentelemetry.io/collector/pdata v1.17.0 // indirect
 	go.opentelemetry.io/collector/pdata/pprofile v0.110.0 // indirect
 	go.opentelemetry.io/collector/pdata/testdata v0.110.0 // indirect
 	go.opentelemetry.io/collector/pipeline v0.110.0 // indirect
@@ -249,7 +249,7 @@ require (
 	gonum.org/v1/gonum v0.15.1 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240924160255-9d4c2d233b61 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240924160255-9d4c2d233b61 // indirect
-	google.golang.org/grpc v1.67.0 // indirect
+	google.golang.org/grpc v1.67.1 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
