@@ -1,11 +1,10 @@
 SHELL=/bin/bash -e -o pipefail
 PWD = $(shell pwd)
 
+# constants
+GOLANGCI_VERSION = 1.55.1
 
 all: git-hooks tidy ## Initializes all tools
-
-out:
-	@mkdir -p out
 
 git-hooks:
 	@git config --local core.hooksPath .githooks/
@@ -13,37 +12,38 @@ git-hooks:
 download: ## Downloads the dependencies
 	@go mod download
 
-update: ## Updates the dependencies
-	@go get $(go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all)
-
 tidy: ## Cleans up go.mod and go.sum
 	@go mod tidy
 
 imports: bin/goimports
 	@bin/goimports -w -l .
 
-agent: imports  ## Run the app
-	 CGO_ENABLED=1 go build -ldflags "-s -w" -o ./agent/out/agent agent/cmd/*.go && ./agent/out/agent --config examples/telemetry.yaml
+run: build   ## Run the app
+	@./out/main -vvv
+
+init: build
+	@./out/main init -vvv
 
 test-build: ## Tests whether the code compiles
 	@go build -o /dev/null ./...
 
-build: imports out/bin ## Builds all binaries
+build: imports out ## Builds all binaries
 
-GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)" ./...
-.PHONY: out/bin
-out/bin:
+GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)/main" main.go
+.PHONY: out
+out:
 	$(GO_BUILD)
 
 GOLANGCI_LINT = bin/golangci-lint
 $(GOLANGCI_LINT):
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b bin
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s
+	@mv bin/golangci-lint "$(@)"
 
 lint: imports $(GOLANGCI_LINT) download ## Lints all code with golangci-lint
-	@$(GOLANGCI_LINT) run --verbose
+	@$(GOLANGCI_LINT) run --verbose ./...
 
 lint-fix: imports $(GOLANGCI_LINT) download ## Fixes all code with golangci-lint
-	@$(GOLANGCI_LINT) run --fix --verbose
+	@$(GOLANGCI_LINT) run --fix --verbose ./...
 
 lint-reports: out/lint.xml
 

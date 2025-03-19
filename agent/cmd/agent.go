@@ -31,12 +31,12 @@ and exports telemetry data. It is a component of the OpenTelemetry project.`,
 				common.WithName("agent"),
 				common.WithVersion(internal.Version),
 			)
-			var _, err = telemetry.Initialize(cmd.Context(), telemetry.WithConfig(initial))
+			var err = telemetry.Initialize(cmd.Context(), initial)
 			if err != nil {
 				return err
 			}
 
-			a, err := agent.Initialize(cmd.Context(), *initial)
+			a, err := agent.Initialize(cmd.Context(), initial)
 			if err != nil {
 				return err
 			}

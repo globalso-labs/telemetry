@@ -35,7 +35,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func Initialize(ctx context.Context, telemetry config.Telemetry) (*Agent, error) {
+func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Agent, error) {
 	info := component.BuildInfo{
 		Command:     "agent",
 		Description: fmt.Sprint("OpenTelemetry Collector Agent on ", telemetry.Resource.GetName()),
@@ -46,7 +46,7 @@ func Initialize(ctx context.Context, telemetry config.Telemetry) (*Agent, error)
 		return nil, errors.ErrTelemetryNotEnabled
 	}
 
-	encoded, err := marshalTelemetryConfig(ctx, &telemetry)
+	encoded, err := marshalTelemetryConfig(ctx, telemetry)
 	if err != nil {
 		return nil, err
 	}
