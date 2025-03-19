@@ -41,7 +41,6 @@ func (l *Logger) Shutdown(ctx context.Context) error {
 	if err := l.processor.Shutdown(ctx); err != nil {
 		return err
 	}
-
 	if err := l.exporter.Shutdown(ctx); err != nil {
 		return err
 	}

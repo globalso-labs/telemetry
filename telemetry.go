@@ -21,86 +21,33 @@ package telemetry
 import (
 	"context"
 
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/meter"
 	"go.globalso.dev/x/telemetry/tracer"
 )
 
-// Telemetry represents the telemetry system, including logger, tracer, and meter.
-type Telemetry struct {
-	ctx    context.Context
-	config *config.Telemetry
-
-	logger *logger.Logger
-	tracer *tracer.Tracer
-	meter  *meter.Meter
-}
-
-// GetConfig returns the telemetry configuration.
-//
-// Returns:
-// - *config.Telemetry: The telemetry configuration.
-func (t *Telemetry) GetConfig() *config.Telemetry {
-	return t.config
-}
-
-// GetResource returns the telemetry resource configuration.
-//
-// Returns:
-// - *internal.Resource: The telemetry resource configuration.
-func (t *Telemetry) GetResource() *common.Resource {
-	return t.config.Resource
-}
-
-// newTelemetry creates a new Telemetry instance with default configuration.
-//
-// Parameters:
-// - ctx context.Context: The context to use for the telemetry instance.
-//
-// Returns:
-// - *Telemetry: The new Telemetry instance.
-func newTelemetry(ctx context.Context) *Telemetry {
-	return &Telemetry{
-		ctx:    ctx,
-		config: config.Default(),
-		logger: nil,
-		tracer: nil,
-		meter:  nil,
-	}
-}
-
-// Initialize sets up the Telemetry instance with the provided options.
-//
-// Parameters:
-// - ctx context.Context: The context to use for initialization.
-// - opts ...Option: The options to configure the telemetry instance.
-//
-// Returns:
-// - *Telemetry: The initialized Telemetry instance.
-// - error: An error if the initialization fails.
-func Initialize(ctx context.Context, opts ...Option) (*Telemetry, error) {
-	t := newTelemetry(ctx)
-	for _, opt := range opts {
-		opt(t)
+func Initialize(ctx context.Context, telemetry *config.Telemetry) error {
+	if telemetry == nil {
+		telemetry = config.Default()
 	}
 
 	var err error
-	t.logger, err = logger.Initialize(t.ctx, t.config)
+
+	_, err = logger.Initialize(ctx, telemetry)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	t.tracer, err = tracer.Initialize(t.ctx, t.config)
+	_, err = tracer.Initialize(ctx, telemetry)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	t.meter, err = meter.Initialize(t.ctx, t.config)
+	_, err = meter.Initialize(ctx, telemetry)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return t, nil
+	return nil
 }

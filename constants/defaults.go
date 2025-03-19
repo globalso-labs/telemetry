@@ -21,11 +21,11 @@ package constants
 import "time"
 
 const Protocol = "https"
-const Endpoint = "telemetry.idbi.pe"
+const Endpoint = "telemetry.globalso.dev"
 
-const LoggerPath = "otlp/v1/logs"
-const MeterPath = "otlp/v1/metrics"
-const TracePath = "otlp/v1/traces"
+const LoggerPath = "v1/logs"
+const MeterPath = "v1/metrics"
+const TracePath = "v1/traces"
 
 const ScrapeInterval = 5 * time.Second
 const PushInterval = 30 * time.Second
