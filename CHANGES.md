@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/globalso-labs/telemetry/compare/v1.2.0...v1.3.0) (2025-03-19)
+
+
+### Features
+
+* update structure ([f2735b8](https://github.com/globalso-labs/telemetry/commit/f2735b8a8eaba637ae23616d458053ade60f708a))
+
 ## [1.2.0](https://github.com/globalso-labs/telemetry/compare/v1.1.1...v1.2.0) (2024-09-26)
 
 
