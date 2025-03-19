@@ -37,7 +37,6 @@ out:
 GOLANGCI_LINT = bin/golangci-lint
 $(GOLANGCI_LINT):
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s
-	@mv bin/golangci-lint "$(@)"
 
 lint: imports $(GOLANGCI_LINT) download ## Lints all code with golangci-lint
 	@$(GOLANGCI_LINT) run --verbose ./...
