@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/globalso-labs/telemetry/compare/v1.3.0...v1.4.0) (2025-03-19)
+
+
+### Features
+
+* implement parse verbosity function ([9878372](https://github.com/globalso-labs/telemetry/commit/9878372639d43e85e8ed29dcd14531b32af86b94))
+
 ## [1.3.0](https://github.com/globalso-labs/telemetry/compare/v1.2.0...v1.3.0) (2025-03-19)
 
 
