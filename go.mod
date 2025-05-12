@@ -19,7 +19,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	go.mau.fi/zerozap v0.1.1
 	go.opentelemetry.io/collector/component v0.110.0
-	go.opentelemetry.io/collector/confmap v1.16.0
+	go.opentelemetry.io/collector/confmap v1.31.0
 	go.opentelemetry.io/collector/confmap/provider/yamlprovider v0.110.0
 	go.opentelemetry.io/collector/connector v0.110.0
 	go.opentelemetry.io/collector/connector/forwardconnector v0.110.0
@@ -121,9 +121,9 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
-	github.com/knadh/koanf/maps v0.1.1 // indirect
-	github.com/knadh/koanf/providers/confmap v0.1.0 // indirect
-	github.com/knadh/koanf/v2 v2.1.1 // indirect
+	github.com/knadh/koanf/maps v0.1.2 // indirect
+	github.com/knadh/koanf/providers/confmap v1.0.0 // indirect
+	github.com/knadh/koanf/v2 v2.2.0 // indirect
 	github.com/leodido/go-syslog/v4 v4.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/leodido/ragel-machinery v0.0.0-20190525184631-5f46317e436b // indirect
@@ -209,7 +209,7 @@ require (
 	go.opentelemetry.io/collector/extension/auth v0.110.0 // indirect
 	go.opentelemetry.io/collector/extension/experimental/storage v0.110.0 // indirect
 	go.opentelemetry.io/collector/extension/extensioncapabilities v0.110.0 // indirect
-	go.opentelemetry.io/collector/featuregate v1.16.0 // indirect
+	go.opentelemetry.io/collector/featuregate v1.31.0 // indirect
 	go.opentelemetry.io/collector/filter v0.110.0 // indirect
 	go.opentelemetry.io/collector/internal/globalgates v0.110.0 // indirect
 	go.opentelemetry.io/collector/internal/globalsignal v0.110.0 // indirect
