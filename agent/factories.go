@@ -45,7 +45,7 @@ func components() (otelcol.Factories, error) {
 	var err error
 	factories := new(otelcol.Factories)
 
-	factories.Extensions, err = extension.MakeFactoryMap(
+	factories.Extensions, err = otelcol.MakeFactoryMap[extension.Factory](
 		filestorage.NewFactory(),
 	)
 	if err != nil {
@@ -54,7 +54,7 @@ func components() (otelcol.Factories, error) {
 	factories.ExtensionModules = make(map[component.Type]string, len(factories.Extensions))
 	factories.ExtensionModules[filestorage.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.110.0" //nolint: lll
 
-	factories.Receivers, err = receiver.MakeFactoryMap(
+	factories.Receivers, err = otelcol.MakeFactoryMap[receiver.Factory](
 		nopreceiver.NewFactory(),
 		hostmetricsreceiver.NewFactory(),
 		nginxreceiver.NewFactory(),
@@ -69,7 +69,7 @@ func components() (otelcol.Factories, error) {
 	factories.ReceiverModules[nginxreceiver.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/nginxreceiver v0.110.0"             //nolint: lll
 	factories.ReceiverModules[filelogreceiver.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.110.0"         //nolint: lll
 
-	factories.Exporters, err = exporter.MakeFactoryMap(
+	factories.Exporters, err = otelcol.MakeFactoryMap[exporter.Factory](
 		debugexporter.NewFactory(),
 		prometheusremotewriteexporter.NewFactory(),
 		otlphttpexporter.NewFactory(),
@@ -82,7 +82,7 @@ func components() (otelcol.Factories, error) {
 	factories.ExporterModules[prometheusremotewriteexporter.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.110.0" //nolint: lll
 	factories.ExporterModules[otlphttpexporter.NewFactory().Type()] = "go.opentelemetry.io/collector/exporter/otlphttpexporter v0.110.0"                                                       //nolint: lll
 
-	factories.Processors, err = processor.MakeFactoryMap(
+	factories.Processors, err = otelcol.MakeFactoryMap[processor.Factory](
 		batchprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
 		resourcedetectionprocessor.NewFactory(),
@@ -97,7 +97,7 @@ func components() (otelcol.Factories, error) {
 	factories.ProcessorModules[resourceprocessor.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.110.0"                   //nolint: lll
 	factories.ProcessorModules[resourcedetectionprocessor.NewFactory().Type()] = "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.110.0" //nolint: lll
 
-	factories.Connectors, err = connector.MakeFactoryMap(
+	factories.Connectors, err = otelcol.MakeFactoryMap[connector.Factory](
 		forwardconnector.NewFactory(),
 	)
 	if err != nil {

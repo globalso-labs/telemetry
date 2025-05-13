@@ -35,7 +35,7 @@ type Telemetry struct {
 	Meter    Meter   `yaml:"meter"`
 	Tracer   Tracer  `yaml:"tracer"`
 
-	Resource *common.Resource `yaml:"-"`
+	Resource *common.Resource `yaml:"resource"`
 }
 
 // Enable activates the telemetry and its associated components (Agent, Logger, Meter, Tracer).
