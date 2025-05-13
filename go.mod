@@ -1,8 +1,6 @@
 module go.globalso.dev/x/telemetry
 
-go 1.24.2
-
-toolchain go1.24.3
+go 1.24.3
 
 require (
 	github.com/denisbrodbeck/machineid v1.0.1
