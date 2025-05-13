@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/globalso-labs/telemetry/compare/v1.4.0...v1.5.0) (2025-05-13)
+
+
+### Features
+
+* add WithTestingCtx method ([bfa449c](https://github.com/globalso-labs/telemetry/commit/bfa449ce0cebcabcfff2308b7d232110a488b0d5))
+* update dependecies ([31232bb](https://github.com/globalso-labs/telemetry/commit/31232bba87e76d2b49a88bbda67261c0c8916439))
+
 ## [1.4.0](https://github.com/globalso-labs/telemetry/compare/v1.3.0...v1.4.0) (2025-03-19)
 
 
