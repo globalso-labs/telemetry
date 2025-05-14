@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0](https://github.com/globalso-labs/telemetry/compare/v1.5.0...v1.6.0) (2025-05-14)
+
+
+### Features
+
+* update definitions ([fb954db](https://github.com/globalso-labs/telemetry/commit/fb954db6ffcded18f553b01d904e8f5f9f92b454))
+* update local dependencies ([7312513](https://github.com/globalso-labs/telemetry/commit/731251357da84192ee518cfac818936a3e0e82ae))
+* update local go version ([e157c4c](https://github.com/globalso-labs/telemetry/commit/e157c4cfd301d8525bffdf256a35da7df9c12361))
+* update sdk logger ([2611ffb](https://github.com/globalso-labs/telemetry/commit/2611ffb79028c90e1442a9859c8fc15da8557e7b))
+
 ## [1.5.0](https://github.com/globalso-labs/telemetry/compare/v1.4.0...v1.5.0) (2025-05-13)
 
 
