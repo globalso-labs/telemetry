@@ -28,7 +28,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-var _resource = &resource.Resource{}
+var _resource *resource.Resource
 
 // GetResource returns the service resource.
 func GetResource(ctx context.Context, res *Resource) *resource.Resource {
@@ -42,7 +42,8 @@ func GetResource(ctx context.Context, res *Resource) *resource.Resource {
 	attrs = append(attrs, semconv.ServiceNamespaceKey.String(res.GetNamespace()))
 	attrs = append(attrs, semconv.ServiceVersionKey.String(res.GetVersion()))
 
-	output, err := resource.New(ctx,
+	var err error
+	_resource, err = resource.New(ctx,
 		resource.WithSchemaURL(semconv.SchemaURL),
 		resource.WithFromEnv(),
 		resource.WithProcess(),
@@ -57,7 +58,7 @@ func GetResource(ctx context.Context, res *Resource) *resource.Resource {
 		return resource.NewWithAttributes(semconv.SchemaURL, attrs...)
 	}
 
-	return output
+	return _resource
 }
 
 func detectCloudResource(ctx context.Context) []attribute.KeyValue {
