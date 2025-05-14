@@ -33,6 +33,7 @@ require (
 	go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.126.0
 	go.opentelemetry.io/collector/receiver v1.32.0
 	go.opentelemetry.io/collector/receiver/nopreceiver v0.126.0
+	go.opentelemetry.io/contrib/detectors/azure/azurevm v0.7.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.60.0
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.11.0

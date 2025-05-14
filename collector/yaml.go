@@ -1,11 +1,9 @@
-//go:build darwin
-
 /*
  * telemetry
- * extensions.go
+ * yaml.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 24 Sep 2024 13:06:21 -0500 by nick.
+ * Last modified at Tue, 24 Sep 2024 01:26:12 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -18,31 +16,41 @@
  * or otherwise exploit this software.
  */
 
-package agent
+package collector
 
 import (
 	"context"
 
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/internal"
 )
 
-func marshalExtensions(ctx context.Context, telemetry *config.Telemetry) (map[string]interface{}, error) {
-	extensions := make(map[string]interface{})
+func marshalTelemetryConfig(ctx context.Context, telemetry *config.Telemetry) ([]byte, error) {
+	extensions, err := marshalExtensions(ctx, telemetry)
+	if err != nil {
+		return nil, err
+	}
+	internal.Merge(telemetry.Agent.Extensions, extensions)
 
-	extensions["file_storage"] = marshalFileStorageExtension(ctx, telemetry)
+	exporters, err := marshalExporters(ctx, telemetry)
+	if err != nil {
+		return nil, err
+	}
+	internal.Merge(telemetry.Agent.Exporters, exporters)
 
-	return extensions, nil
-}
+	processors := marshalProcessors(ctx, telemetry)
+	internal.Merge(telemetry.Agent.Processors, processors)
 
-func marshalFileStorageExtension(_ context.Context, _ *config.Telemetry) map[string]interface{} {
-	extension := make(map[string]interface{})
+	receivers := marshalReceivers(ctx, telemetry)
+	internal.Merge(telemetry.Agent.Receivers, receivers)
 
-	extension["create_directory"] = true
-	extension["directory"] = "/usr/local/var/log/telemetry/file_storage"
-	extension["compaction"] = map[string]interface{}{
-		"on_start":  true,
-		"directory": "/usr/local/var/log/telemetry/file_storage/compaction",
+	service := marshalService(ctx, telemetry)
+	internal.Merge(telemetry.Agent.Service, service)
+
+	data, err := telemetry.Agent.Dump()
+	if err != nil {
+		return nil, err
 	}
 
-	return extension
+	return data, nil
 }

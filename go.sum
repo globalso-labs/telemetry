@@ -686,6 +686,8 @@ go.opentelemetry.io/collector/service/hostcapabilities v0.126.0 h1:6vkGj5e5JE3VM
 go.opentelemetry.io/collector/service/hostcapabilities v0.126.0/go.mod h1:XYh35Etna0vVQA3pg5mAAcOva9RkR2o5a0GA+9n+Nc8=
 go.opentelemetry.io/contrib/bridges/otelzap v0.10.0 h1:ojdSRDvjrnm30beHOmwsSvLpoRF40MlwNCA+Oo93kXU=
 go.opentelemetry.io/contrib/bridges/otelzap v0.10.0/go.mod h1:oTTm4g7NEtHSV2i/0FeVdPaPgUIZPfQkFbq0vbzqnv0=
+go.opentelemetry.io/contrib/detectors/azure/azurevm v0.7.0 h1:CNS8SvoEG8EmqwmT21GddXF8bF7vj8Kk1G5ZLz5EiEo=
+go.opentelemetry.io/contrib/detectors/azure/azurevm v0.7.0/go.mod h1:v8wsSUBYJ2kZKe8lvz0agmnypC1F56x/9a7Dh2vGC+A=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0 h1:sbiXRNDSWJOTobXh5HyQKjq6wUC5tNybqjIqDpAY4CU=
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0/go.mod h1:69uWxva0WgAA/4bu2Yy70SLDBwZXuQ6PbBpbsa5iZrQ=
 go.opentelemetry.io/contrib/instrumentation/runtime v0.60.0 h1:0NgN/3SYkqYJ9NBlDfl/2lzVlwos/YQLvi8sUrzJRBE=

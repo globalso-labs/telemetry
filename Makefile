@@ -1,8 +1,6 @@
 SHELL=/bin/bash -e -o pipefail
 PWD = $(shell pwd)
 
-# constants
-GOLANGCI_VERSION = 1.55.1
 
 all: git-hooks tidy ## Initializes all tools
 
@@ -34,7 +32,7 @@ GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)/main" main.go
 out:
 	$(GO_BUILD)
 
-GOLANGCI_LINT = bin/golangci-lint
+GOLANGCI_LINT = golangci-lint
 $(GOLANGCI_LINT):
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s
 

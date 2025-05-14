@@ -68,7 +68,7 @@ func (h OTLPHook) Run(event *zerolog.Event, level zerolog.Level, message string)
 // - log.Record: The constructed OpenTelemetry log record.
 func (h OTLPHook) convertEvent(e *zerolog.Event, level zerolog.Level, msg string) log.Record {
 	var record log.Record
-	record.SetTimestamp(time.Now().UTC())         // Set the timestamp using zerolog's configured function.
+	record.SetObservedTimestamp(time.Now().UTC()) // Set the timestamp using zerolog's configured function.
 	record.SetBody(log.StringValue(msg))          // Set the log message body.
 	record.SetSeverity(convertSeverity(level))    // Convert and set the severity constants based on zerolog's constants.
 	record.SetSeverityText(level.String())        // Set the severity text using zerolog's constants string.

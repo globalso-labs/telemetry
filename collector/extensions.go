@@ -1,4 +1,4 @@
-//go:build windows
+//go:build !windows && !darwin
 
 /*
  * telemetry
@@ -18,7 +18,7 @@
  * or otherwise exploit this software.
  */
 
-package agent
+package collector
 
 import (
 	"context"
@@ -38,10 +38,10 @@ func marshalFileStorageExtension(_ context.Context, _ *config.Telemetry) map[str
 	extension := make(map[string]interface{})
 
 	extension["create_directory"] = true
-	extension["directory"] = "%ProgramData%\\Telemetry\\FileStorage"
+	extension["directory"] = "/var/log/telemetry/file_storage"
 	extension["compaction"] = map[string]interface{}{
 		"on_start":  true,
-		"directory": "%ProgramData%\\Telemetry\\FileStorage\\Compaction",
+		"directory": "/var/log/telemetry/file_storage/compaction",
 	}
 
 	return extension

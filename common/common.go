@@ -18,17 +18,8 @@
 
 package common
 
-// UnknownServiceName is a placeholder name for an unknown service.
+// UnknownServiceName is a placeholder Name for an unknown service.
 const UnknownServiceName = "service"
 
-// UnknownServiceNamespace is a placeholder namespace for an unknown service.
+// UnknownServiceNamespace is a placeholder Namespace for an unknown service.
 const UnknownServiceNamespace = "default"
-
-// AgentServiceName is the name of the telemetry agent service.
-const AgentServiceName = "telemetry"
-
-// APIServiceName is the name of the API server service.
-const APIServiceName = "api-server"
-
-// WebServiceName is the name of the web server service.
-const WebServiceName = "web-server"

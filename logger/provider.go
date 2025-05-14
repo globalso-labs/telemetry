@@ -70,6 +70,7 @@ func newProcessor(_ context.Context, exporter *otlploghttp.Exporter) *log.BatchP
 
 func newLoggerProvider(ctx context.Context, res *common.Resource, processor log.Processor) *log.LoggerProvider {
 	resource := common.GetResource(ctx, res)
+
 	return log.NewLoggerProvider(
 		log.WithResource(resource),
 		log.WithProcessor(processor),

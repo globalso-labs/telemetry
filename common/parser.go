@@ -20,15 +20,23 @@ package common
 
 import (
 	"context"
+	"time"
 
+	"go.opentelemetry.io/contrib/detectors/azure/azurevm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
+var _resource = &resource.Resource{}
+
 // GetResource returns the service resource.
 func GetResource(ctx context.Context, res *Resource) *resource.Resource {
-	attrs := make([]attribute.KeyValue, 0)
+	if _resource != nil {
+		return _resource
+	}
+
+	attrs := detectCloudResource(ctx)
 	attrs = append(attrs, semconv.ServiceInstanceIDKey.String(res.GetID()))
 	attrs = append(attrs, semconv.ServiceNameKey.String(res.GetName()))
 	attrs = append(attrs, semconv.ServiceNamespaceKey.String(res.GetNamespace()))
@@ -42,6 +50,7 @@ func GetResource(ctx context.Context, res *Resource) *resource.Resource {
 		resource.WithHost(),
 		resource.WithHostID(),
 		resource.WithAttributes(attrs...),
+		resource.WithTelemetrySDK(),
 	)
 
 	if err != nil {
@@ -49,4 +58,16 @@ func GetResource(ctx context.Context, res *Resource) *resource.Resource {
 	}
 
 	return output
+}
+
+func detectCloudResource(ctx context.Context) []attribute.KeyValue {
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	azure, err := azurevm.New().Detect(ctx)
+	if err != nil {
+		return []attribute.KeyValue{}
+	}
+
+	return azure.Attributes()
 }

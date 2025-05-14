@@ -1,9 +1,11 @@
+//go:build darwin
+
 /*
  * telemetry
- * yaml.go
+ * extensions.go
  * This file is part of telemetry.
  * Copyright (c) 2024.
- * Last modified at Tue, 24 Sep 2024 01:26:12 -0500 by nick.
+ * Last modified at Tue, 24 Sep 2024 13:06:21 -0500 by nick.
  *
  * DISCLAIMER: This software is provided "as is" without warranty of any kind, either expressed or implied. The entire
  * risk as to the quality and performance of the software is with you. In no event will the author be liable for any
@@ -16,41 +18,31 @@
  * or otherwise exploit this software.
  */
 
-package agent
+package collector
 
 import (
 	"context"
 
 	"go.globalso.dev/x/telemetry/config"
-	"go.globalso.dev/x/telemetry/internal"
 )
 
-func marshalTelemetryConfig(ctx context.Context, telemetry *config.Telemetry) ([]byte, error) {
-	extensions, err := marshalExtensions(ctx, telemetry)
-	if err != nil {
-		return nil, err
-	}
-	internal.Merge(telemetry.Agent.Extensions, extensions)
+func marshalExtensions(ctx context.Context, telemetry *config.Telemetry) (map[string]interface{}, error) {
+	extensions := make(map[string]interface{})
 
-	exporters, err := marshalExporters(ctx, telemetry)
-	if err != nil {
-		return nil, err
-	}
-	internal.Merge(telemetry.Agent.Exporters, exporters)
+	extensions["file_storage"] = marshalFileStorageExtension(ctx, telemetry)
 
-	processors := marshalProcessors(ctx, telemetry)
-	internal.Merge(telemetry.Agent.Processors, processors)
+	return extensions, nil
+}
 
-	receivers := marshalReceivers(ctx, telemetry)
-	internal.Merge(telemetry.Agent.Receivers, receivers)
+func marshalFileStorageExtension(_ context.Context, _ *config.Telemetry) map[string]interface{} {
+	extension := make(map[string]interface{})
 
-	service := marshalService(ctx, telemetry)
-	internal.Merge(telemetry.Agent.Service, service)
-
-	data, err := telemetry.Agent.Dump()
-	if err != nil {
-		return nil, err
+	extension["create_directory"] = true
+	extension["directory"] = "/usr/local/var/log/telemetry/file_storage"
+	extension["compaction"] = map[string]interface{}{
+		"on_start":  true,
+		"directory": "/usr/local/var/log/telemetry/file_storage/compaction",
 	}
 
-	return data, nil
+	return extension
 }

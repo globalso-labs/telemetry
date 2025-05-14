@@ -26,12 +26,12 @@ import (
 // Option is a function type that modifies a Resource.
 type Option func(*Resource)
 
-// Resource represents a telemetry resource with an ID, name, namespace, and version.
+// Resource represents a telemetry resource with an ID, Name, Namespace, and Version.
 type Resource struct {
 	id        string
-	name      string
-	namespace string
-	version   string
+	Name      string `yaml:"Name"`
+	Namespace string `yaml:"Namespace"`
+	Version   string `yaml:"Version"`
 }
 
 // GetID returns the ID of the Resource.
@@ -42,66 +42,66 @@ func (r *Resource) GetID() string {
 	return r.id
 }
 
-// GetName returns the name of the Resource.
+// GetName returns the Name of the Resource.
 //
 // Returns:
-// - string: The name of the Resource.
+// - string: The Name of the Resource.
 func (r *Resource) GetName() string {
-	return r.name
+	return r.Name
 }
 
-// GetNamespace returns the namespace of the Resource.
+// GetNamespace returns the Namespace of the Resource.
 //
 // Returns:
-// - string: The namespace of the Resource.
+// - string: The Namespace of the Resource.
 func (r *Resource) GetNamespace() string {
-	return r.namespace
+	return r.Namespace
 }
 
-// GetVersion returns the version of the Resource.
+// GetVersion returns the Version of the Resource.
 //
 // Returns:
-// - string: The version of the Resource.
+// - string: The Version of the Resource.
 func (r *Resource) GetVersion() string {
-	return r.version
+	return r.Version
 }
 
-// WithName sets the name of the Resource.
+// WithName sets the Name of the Resource.
 //
 // Parameters:
-// - name string: The name to set.
+// - Name string: The Name to set.
 //
 // Returns:
-// - Option: An Option function that sets the name of the Resource.
+// - Option: An Option function that sets the Name of the Resource.
 func WithName(name string) Option {
 	return func(r *Resource) {
-		r.name = name
+		r.Name = name
 	}
 }
 
-// WithNamespace sets the namespace of the Resource.
+// WithNamespace sets the Namespace of the Resource.
 //
 // Parameters:
-// - namespace string: The namespace to set.
+// - Namespace string: The Namespace to set.
 //
 // Returns:
-// - Option: An Option function that sets the namespace of the Resource.
+// - Option: An Option function that sets the Namespace of the Resource.
 func WithNamespace(namespace string) Option {
 	return func(r *Resource) {
-		r.namespace = namespace
+		r.Namespace = namespace
 	}
 }
 
-// WithVersion sets the version of the Resource.
+// WithVersion sets the Version of the Resource.
 //
 // Parameters:
-// - version string: The version to set.
+// - Version string: The Version to set.
 //
 // Returns:
-// - Option: An Option function that sets the version of the Resource.
+// - Option: An Option function that sets the Version of the Resource.
 func WithVersion(version string) Option {
 	return func(r *Resource) {
-		r.version = version
+		r.Version = version
 	}
 }
 
@@ -117,9 +117,9 @@ func NewResource(opts ...Option) *Resource {
 
 	r := &Resource{
 		id:        m,
-		name:      UnknownServiceName,
-		namespace: UnknownServiceNamespace,
-		version:   internal.Version,
+		Name:      UnknownServiceName,
+		Namespace: UnknownServiceNamespace,
+		Version:   internal.Version,
 	}
 
 	for _, opt := range opts {

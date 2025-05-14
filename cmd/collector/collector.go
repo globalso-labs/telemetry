@@ -6,8 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.globalso.dev/x/telemetry"
-	"go.globalso.dev/x/telemetry/agent"
+	"go.globalso.dev/x/telemetry/collector"
 	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/internal"
@@ -15,7 +14,7 @@ import (
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "agent",
+		Use:   "collector",
 		Short: "Telemetry Collector Agent",
 		Long: `Telemetry Collector Agent is a service that collects, processes,
 and exports telemetry data. It is a component of the OpenTelemetry project.`,
@@ -28,15 +27,11 @@ and exports telemetry data. It is a component of the OpenTelemetry project.`,
 			}
 
 			initial.Resource = common.NewResource(
-				common.WithName("agent"),
+				common.WithName("collector"),
 				common.WithVersion(internal.Version),
 			)
-			var err = telemetry.Initialize(cmd.Context(), initial)
-			if err != nil {
-				return err
-			}
 
-			a, err := agent.Initialize(cmd.Context(), initial)
+			a, err := collector.Initialize(cmd.Context(), initial)
 			if err != nil {
 				return err
 			}

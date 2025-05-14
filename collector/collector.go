@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package agent
+package collector
 
 import (
 	"context"
@@ -37,7 +37,7 @@ import (
 
 func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Agent, error) {
 	info := component.BuildInfo{
-		Command:     "agent",
+		Command:     "collector",
 		Description: fmt.Sprint("OpenTelemetry Collector Agent on ", telemetry.Resource.GetName()),
 		Version:     telemetry.Resource.GetVersion(),
 	}
@@ -51,7 +51,7 @@ func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Agent, error
 		return nil, err
 	}
 
-	settings := otelcol.CollectorSettings{
+	settings := otelcol.CollectorSettings{ //nolint:exhaustruct // We don't need all fields.
 		Factories:               components,
 		BuildInfo:               info,
 		DisableGracefulShutdown: false,

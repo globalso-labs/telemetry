@@ -42,7 +42,11 @@ func Default() *Telemetry {
 		},
 		Agent: Agent{
 			Extensions: map[string]interface{}{},
-			Exporters:  map[string]interface{}{},
+			Exporters: map[string]interface{}{
+				"debug": map[string]string{
+					"verbosity": "detailed",
+				},
+			},
 			Receivers:  map[string]interface{}{},
 			Processors: map[string]interface{}{},
 			Service:    map[string]interface{}{},

@@ -20,12 +20,10 @@ package logger
 
 import (
 	"github.com/rs/zerolog"
+	"go.globalso.dev/x/telemetry/logger/drivers"
 )
 
-// logger is the global logger instance.
-var logger = zerolog.Nop()
+var w = drivers.NewConsole()
 
-// SetGlobalLogger sets the global logger instance.
-func SetGlobalLogger(l zerolog.Logger) {
-	logger = l
-}
+// logger is the global logger instance.
+var logger = zerolog.New(w).Level(zerolog.ErrorLevel).With().Timestamp().Caller().Logger()

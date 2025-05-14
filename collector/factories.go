@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package agent
+package collector
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter"
