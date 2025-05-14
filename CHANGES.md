@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/globalso-labs/telemetry/compare/v1.6.0...v1.6.1) (2025-05-14)
+
+
+### Bug Fixes
+
+* update resource initialization to use global variable ([1275f85](https://github.com/globalso-labs/telemetry/commit/1275f85029b8f9f1e4b70f3404b1ea2bca9a47ff))
+
 ## [1.6.0](https://github.com/globalso-labs/telemetry/compare/v1.5.0...v1.6.0) (2025-05-14)
 
 
