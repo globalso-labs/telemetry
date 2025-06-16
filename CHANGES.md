@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/globalso-labs/telemetry/compare/v1.6.1...v1.7.0) (2025-06-16)
+
+
+### Features
+
+* export zerolog.Logger as Instance type alias ([9b5f611](https://github.com/globalso-labs/telemetry/commit/9b5f6116cae5e037b63965a7a1133fc51154a080))
+
 ## [1.6.1](https://github.com/globalso-labs/telemetry/compare/v1.6.0...v1.6.1) (2025-05-14)
 
 
