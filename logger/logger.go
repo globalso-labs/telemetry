@@ -31,6 +31,8 @@ import (
 	"go.opentelemetry.io/otel/log/global"
 )
 
+type Instance = zerolog.Logger
+
 func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Logger, error) {
 	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
