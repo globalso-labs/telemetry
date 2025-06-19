@@ -32,13 +32,12 @@ GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)/main" main.go
 out:
 	$(GO_BUILD)
 
-GOLANGCI_LINT = golangci-lint
+GOLANGCI_LINT = bin/golangci-lint
 $(GOLANGCI_LINT):
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s
 
 lint: imports $(GOLANGCI_LINT) download ## Lints all code with golangci-lint
 	@$(GOLANGCI_LINT) run --verbose ./...
-
 lint-fix: imports $(GOLANGCI_LINT) download ## Fixes all code with golangci-lint
 	@$(GOLANGCI_LINT) run --fix --verbose ./...
 
