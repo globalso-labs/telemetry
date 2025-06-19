@@ -57,3 +57,8 @@ func Fatal() *zerolog.Event { return logger.Fatal() }
 
 // Panic logs a panic constants message using the zerolog.Logger from the provided context.
 func Panic() *zerolog.Event { return logger.Panic() }
+
+// WithKey retrieves the zerolog.Logger from the provided context, then add a specified key.
+func WithKey(ctx context.Context, key string, value interface{}) zerolog.Logger {
+	return Ctx(ctx).With().Interface(key, value).Logger()
+}

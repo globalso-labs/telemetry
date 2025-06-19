@@ -21,10 +21,11 @@ package logger
 import (
 	"context"
 	"os"
+	"testing"
 
 	"github.com/rs/zerolog"
 )
 
-func WithTestingCtx(ctx context.Context) context.Context {
-	return logger.With().Int("pid", os.Getpid()).Logger().Level(zerolog.TraceLevel).WithContext(ctx)
+func WithTestingContext(t *testing.T) context.Context {
+	return logger.With().Int("pid", os.Getpid()).Logger().Level(zerolog.TraceLevel).WithContext(t.Context())
 }
