@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.0.0](https://github.com/globalso-labs/telemetry/compare/v1.7.0...v2.0.0) (2025-06-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* OpenTelemetry collector agent is no longer included or supported in this repository. All related binaries, configuration, and integration points are removed. Downstream consumers must migrate to external collector solutions.
+* Dependency updates may introduce breaking changes from upstream libraries. Review release notes of updated dependencies for possible API or behavior changes.
+* testing method renamed
+
+### Features
+
+* add WithKey function and update testing context handling ([2df39ca](https://github.com/globalso-labs/telemetry/commit/2df39cae4dc7181c3eddb770514ab6a69ed25e86))
+
+
+### Bug Fixes
+
+* update golangci-lint path to ensure consistency ([7ed292f](https://github.com/globalso-labs/telemetry/commit/7ed292fd19971e3ea2a0043639ac7fa188434ec0))
+
+
+### Miscellaneous Chores
+
+* update dependencies to latest versions ([74069f7](https://github.com/globalso-labs/telemetry/commit/74069f74e08901c0c2d1d1a2d8bbb058f2dc181e))
+
+
+### Code Refactoring
+
+* remove OpenTelemetry collector agent implementation ([868f941](https://github.com/globalso-labs/telemetry/commit/868f9415b6674948ed95020f35d8676e470eb34a))
+
 ## [1.7.0](https://github.com/globalso-labs/telemetry/compare/v1.6.1...v1.7.0) (2025-06-16)
 
 
