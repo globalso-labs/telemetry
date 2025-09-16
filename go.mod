@@ -4,7 +4,7 @@ go 1.24.3
 
 require (
 	github.com/denisbrodbeck/machineid v1.0.1
-	github.com/getsentry/sentry-go v0.33.0
+	github.com/getsentry/sentry-go v0.35.3
 	github.com/gin-gonic/gin v1.10.1
 	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
