@@ -23,16 +23,14 @@ import "github.com/rs/zerolog"
 func ParseVerbosity(verbosity int) zerolog.Level {
 	switch verbosity {
 	case 0:
-		return zerolog.ErrorLevel
-	case 1:
 		return zerolog.WarnLevel
-	case 2:
+	case 1:
 		return zerolog.InfoLevel
-	case 3:
+	case 2:
 		return zerolog.DebugLevel
-	case 4:
+	case 3:
 		return zerolog.TraceLevel
 	default:
-		return zerolog.DebugLevel
+		return zerolog.WarnLevel
 	}
 }
