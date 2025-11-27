@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run Issue Bot
         uses: derjuulsn/todo-issue@15060dad73c1571dc9d6fbe6a3e64f2aad27ae74 #v1.1.5
