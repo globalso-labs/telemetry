@@ -31,8 +31,6 @@ func New(hooks []string) ([]zerolog.Hook, error) {
 		switch driver {
 		case "otlp":
 			output = append(output, OTLPHook{})
-		case "sentry":
-			output = append(output, SentryHook{})
 		default:
 			return nil, fmt.Errorf("unknown driver: %s", driver)
 		}
