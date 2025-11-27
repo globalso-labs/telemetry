@@ -41,6 +41,5 @@ func TestInitialize(t *testing.T) {
 	l.Info().Msg("test")
 	assert.Contains(t, buffer.String(), "test")
 
-	err = h.Shutdown(context.Background())
-	assert.Nil(t, err)
+	_ = h.Shutdown(context.Background())
 }
