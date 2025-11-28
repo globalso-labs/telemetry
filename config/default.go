@@ -55,7 +55,7 @@ func Default() *Telemetry {
 		Meter:  MeterDefault(),
 		Tracer: TracerDefault(),
 
-		Resource: common.NewResource(),
+		Resource: shared.NewResource(),
 	}
 
 	t.Enable()

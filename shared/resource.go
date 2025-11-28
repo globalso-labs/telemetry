@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package common
+package shared
 
 import (
 	"github.com/denisbrodbeck/machineid"

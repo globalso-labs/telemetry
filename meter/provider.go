@@ -83,8 +83,8 @@ func newReader(_ context.Context, exporter metric.Exporter, cfg *config.Telemetr
 // newProvider creates a new MeterProvider for meter.
 // It takes a metric reader and a Meter configuration as parameters.
 // It returns a MeterProvider configured with the specified resource and reader.
-func newProvider(ctx context.Context, res *common.Resource, reader metric.Reader) *metric.MeterProvider {
-	resource := common.GetResource(ctx, res)
+func newProvider(ctx context.Context, res *shared.Resource, reader metric.Reader) *metric.MeterProvider {
+	resource := shared.GetResource(ctx, res)
 	return metric.NewMeterProvider(
 		metric.WithResource(resource),
 		metric.WithReader(reader),

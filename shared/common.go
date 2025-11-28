@@ -16,7 +16,7 @@
  * or otherwise exploit this software.
  */
 
-package common
+package shared
 
 // UnknownServiceName is a placeholder Name for an unknown service.
 const UnknownServiceName = "service"

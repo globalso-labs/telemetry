@@ -66,8 +66,8 @@ func newProcessor(_ context.Context, exporter *otlptrace.Exporter) trace.SpanPro
 	return trace.NewBatchSpanProcessor(exporter)
 }
 
-func newProvider(ctx context.Context, res *common.Resource, processor trace.SpanProcessor) *trace.TracerProvider {
-	resource := common.GetResource(ctx, res)
+func newProvider(ctx context.Context, res *shared.Resource, processor trace.SpanProcessor) *trace.TracerProvider {
+	resource := shared.GetResource(ctx, res)
 	return trace.NewTracerProvider(
 		trace.WithResource(resource),
 		trace.WithSpanProcessor(processor),
