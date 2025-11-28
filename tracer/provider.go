@@ -21,8 +21,8 @@ package tracer
 import (
 	"context"
 
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/shared"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/trace"

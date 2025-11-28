@@ -21,8 +21,8 @@ package logger
 import (
 	"context"
 
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/shared"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/sdk/log"
 )

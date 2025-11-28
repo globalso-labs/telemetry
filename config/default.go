@@ -19,8 +19,8 @@
 package config
 
 import (
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/constants"
+	"go.globalso.dev/x/telemetry/shared"
 )
 
 // Default initializes and returns a default Telemetry configuration.

@@ -19,7 +19,7 @@
 package config
 
 import (
-	"go.globalso.dev/x/telemetry/common"
+	"go.globalso.dev/x/telemetry/shared"
 	"gopkg.in/yaml.v2"
 )
 

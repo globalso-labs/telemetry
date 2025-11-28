@@ -21,8 +21,8 @@ package meter
 import (
 	"context"
 
-	"go.globalso.dev/x/telemetry/common"
 	"go.globalso.dev/x/telemetry/config"
+	"go.globalso.dev/x/telemetry/shared"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
 )
