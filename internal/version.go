@@ -18,6 +18,6 @@
 
 package internal
 
-const Module = "Telemetry"
+const Module = "telemetry"
 
 const Version = "1.8.0"
