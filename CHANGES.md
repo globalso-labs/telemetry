@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/globalso-labs/telemetry/compare/v1.8.0...v2.0.0) (2025-11-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removes Sentry logging hook and related dependency.
+
+### Bug Fixes
+
+* rename module to lower case ([9ef6f1f](https://github.com/globalso-labs/telemetry/commit/9ef6f1f3991c14573a7c03e7858f0ca558b9d83d))
+
+
+### Code Refactoring
+
+* update workflows and dependencies to latest versions ([ac38dec](https://github.com/globalso-labs/telemetry/commit/ac38dece8e7da795d500c9d51aee36bb8ab82478))
+
 ## [1.8.0](https://github.com/globalso-labs/telemetry/compare/v2.0.0...v1.8.0) (2025-06-19)
 
 
