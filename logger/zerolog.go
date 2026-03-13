@@ -30,35 +30,30 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 }
 
 // With returns a new zerolog.Context.
-func With() zerolog.Context { return logger.With() }
+func With() zerolog.Context { return DefaultLogger.With() }
 
 // Log logs a no-constants message using the zerolog.Logger from the provided context.
 func Log() *zerolog.Event {
-	return logger.Log()
+	return DefaultLogger.Log()
 }
 
 // Trace logs a trace constants message using the zerolog.Logger from the provided context.
-func Trace() *zerolog.Event { return logger.Trace() }
+func Trace() *zerolog.Event { return DefaultLogger.Trace() }
 
 // Debug logs a debug constants message using the zerolog.Logger from the provided context.
-func Debug() *zerolog.Event { return logger.Debug() }
+func Debug() *zerolog.Event { return DefaultLogger.Debug() }
 
 // Info logs an info constants message using the zerolog.Logger from the provided context.
-func Info() *zerolog.Event { return logger.Info() }
+func Info() *zerolog.Event { return DefaultLogger.Info() }
 
 // Warn logs a warn constants message using the zerolog.Logger from the provided context.
-func Warn() *zerolog.Event { return logger.Warn() }
+func Warn() *zerolog.Event { return DefaultLogger.Warn() }
 
 // Error logs an error constants message using the zerolog.Logger from the provided context.
-func Error() *zerolog.Event { return logger.Error() }
+func Error() *zerolog.Event { return DefaultLogger.Error() }
 
 // Fatal logs a fatal constants message using the zerolog.Logger from the provided context.
-func Fatal() *zerolog.Event { return logger.Fatal() }
+func Fatal() *zerolog.Event { return DefaultLogger.Fatal() }
 
 // Panic logs a panic constants message using the zerolog.Logger from the provided context.
-func Panic() *zerolog.Event { return logger.Panic() }
-
-// WithKey retrieves the zerolog.Logger from the provided context, then add a specified key.
-func WithKey(ctx context.Context, key string, value interface{}) zerolog.Logger {
-	return Ctx(ctx).With().Interface(key, value).Logger()
-}
+func Panic() *zerolog.Event { return DefaultLogger.Panic() }

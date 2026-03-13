@@ -39,6 +39,10 @@ import (
 // - *Meter: The initialized Meter instance.
 // - error: An error if the initialization fails.
 func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Meter, error) {
+	if telemetry == nil {
+		return nil, errors.ErrTelemetryConfigNil
+	}
+
 	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
@@ -66,7 +70,10 @@ func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Meter, error
 	otel.SetMeterProvider(holder.provider)
 
 	// Run runtime collectors
-	_ = runtime.Start()
+	if err := runtime.Start(); err != nil {
+		_ = holder.Shutdown(ctx)
+		return nil, fmt.Errorf("failed to start runtime metrics: %w", err)
+	}
 
 	return holder, nil
 }

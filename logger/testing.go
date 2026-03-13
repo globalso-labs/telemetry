@@ -27,5 +27,5 @@ import (
 )
 
 func WithTestingContext(t *testing.T) context.Context {
-	return logger.With().Int("pid", os.Getpid()).Logger().Level(zerolog.TraceLevel).WithContext(t.Context())
+	return DefaultLogger.With().Int("pid", os.Getpid()).Logger().Level(zerolog.TraceLevel).WithContext(t.Context())
 }

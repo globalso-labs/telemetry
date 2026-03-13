@@ -37,6 +37,10 @@ import (
 // - *Tracer: The initialized Tracer instance.
 // - error: An error if the initialization fails.
 func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Tracer, error) {
+	if telemetry == nil {
+		return nil, errors.ErrTelemetryConfigNil
+	}
+
 	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}

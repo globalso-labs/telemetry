@@ -31,10 +31,29 @@ func TestInitialize(t *testing.T) {
 	t.Parallel()
 
 	var err error
+	var h *telemetry.Handle
 
-	err = telemetry.Initialize(context.Background(), config.Default())
+	h, err = telemetry.Start(context.Background(), config.Default())
 	require.Nil(t, err)
+	require.NotNil(t, h)
+	defer h.Shutdown(t.Context())
 
-	err = telemetry.Initialize(context.Background(), nil)
+	h, err = telemetry.Start(context.Background(), nil)
 	require.Nil(t, err)
+	require.NotNil(t, h)
+	defer h.Shutdown(t.Context())
+}
+
+func TestStartDisabled(t *testing.T) {
+	t.Parallel()
+
+	cfg := config.Default()
+	cfg.Disable()
+
+	handle, err := telemetry.Start(context.Background(), cfg)
+	require.NoError(t, err)
+	require.NotNil(t, handle)
+
+	err = handle.Shutdown(context.Background())
+	require.NoError(t, err)
 }

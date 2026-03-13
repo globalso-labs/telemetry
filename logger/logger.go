@@ -34,6 +34,10 @@ import (
 type Instance = zerolog.Logger
 
 func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Logger, error) {
+	if telemetry == nil {
+		return nil, errors.ErrTelemetryConfigNil
+	}
+
 	if !telemetry.Enabled {
 		return nil, errors.ErrTelemetryNotEnabled
 	}
@@ -81,10 +85,10 @@ func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Logger, erro
 	}
 
 	// Create the logger.
-	logger = zerolog.New(writer).Level(level).Hook(hook...).With().Timestamp().Caller().Logger()
+	DefaultLogger = zerolog.New(writer).Level(level).Hook(hook...).With().Timestamp().Caller().Logger()
 
 	// Set the caller marshal function.
-	zerolog.DefaultContextLogger = &logger
+	zerolog.DefaultContextLogger = &DefaultLogger
 	zerolog.CallerMarshalFunc = custom.CallerMarshalFunc
 
 	return holder, nil

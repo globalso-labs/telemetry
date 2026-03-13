@@ -25,5 +25,5 @@ import (
 
 var w = drivers.NewConsole()
 
-// logger is the global logger instance.
-var logger = zerolog.New(w).Level(zerolog.ErrorLevel).With().Timestamp().Caller().Logger()
+// DefaultLogger is the pre-configured global logger instance for logging errors with timestamp and caller information.
+var DefaultLogger = zerolog.New(w).Level(zerolog.ErrorLevel).With().Timestamp().Caller().Logger()

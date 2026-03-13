@@ -20,34 +20,101 @@ package telemetry
 
 import (
 	"context"
+	"errors"
 
 	"go.globalso.dev/x/telemetry/config"
 	"go.globalso.dev/x/telemetry/logger"
 	"go.globalso.dev/x/telemetry/meter"
+	"go.globalso.dev/x/telemetry/shared"
 	"go.globalso.dev/x/telemetry/tracer"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
-func Initialize(ctx context.Context, telemetry *config.Telemetry) error {
+// Handle holds initialized telemetry components and provides shutdown helpers.
+type Handle struct {
+	Logger *logger.Logger
+	Meter  *meter.Meter
+	Tracer *tracer.Tracer
+}
+
+// Shutdown gracefully shuts down all initialized components, aggregating errors.
+func (h *Handle) Shutdown(ctx context.Context) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	var errs []error
+	if h == nil {
+		return nil
+	}
+	if h.Meter != nil {
+		if err := h.Meter.Shutdown(ctx); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if h.Tracer != nil {
+		if err := h.Tracer.Shutdown(ctx); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if h.Logger != nil {
+		if err := h.Logger.Shutdown(ctx); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return errors.Join(errs...)
+}
+
+// Close is a convenience wrapper that shuts down with a background context.
+func (h *Handle) Close() error {
+	return h.Shutdown(context.Background())
+}
+
+// Start initializes telemetry and returns a handle to shut it down later.
+// It is safe to call when telemetry or its subcomponents are disabled.
+func Start(ctx context.Context, telemetry *config.Telemetry) (*Handle, error) {
 	if telemetry == nil {
 		telemetry = config.Default()
 	}
+	if telemetry.Resource == nil {
+		telemetry.Resource = shared.NewResource()
+	}
+	if !telemetry.Enabled {
+		return &Handle{}, nil
+	}
+
+	otel.SetTextMapPropagator(
+		propagation.NewCompositeTextMapPropagator(
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		),
+	)
+
+	handle := &Handle{}
 
 	var err error
-
-	_, err = logger.Initialize(ctx, telemetry)
-	if err != nil {
-		return err
+	if telemetry.Logger.Enabled {
+		handle.Logger, err = logger.Initialize(ctx, telemetry)
+		if err != nil {
+			return nil, errors.Join(err, handle.Shutdown(ctx))
+		}
 	}
 
-	_, err = tracer.Initialize(ctx, telemetry)
-	if err != nil {
-		return err
+	if telemetry.Tracer.Enabled {
+		handle.Tracer, err = tracer.Initialize(ctx, telemetry)
+		if err != nil {
+			return nil, errors.Join(err, handle.Shutdown(ctx))
+		}
 	}
 
-	_, err = meter.Initialize(ctx, telemetry)
-	if err != nil {
-		return err
+	if telemetry.Meter.Enabled {
+		handle.Meter, err = meter.Initialize(ctx, telemetry)
+		if err != nil {
+			return nil, errors.Join(err, handle.Shutdown(ctx))
+		}
 	}
 
-	return nil
+	return handle, nil
 }
