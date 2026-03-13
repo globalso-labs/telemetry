@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/globalso-labs/telemetry/compare/v1.9.0...v2.0.0) (2026-03-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* Initialize method has been removed.
+
+### Features
+
+* enhance telemetry initialization and logger design ([aefeced](https://github.com/globalso-labs/telemetry/commit/aefeced98ba711ada91109d1e8ada5c8056e1008))
+
+
+### Bug Fixes
+
+* correct error assignment in meter initialization and update linter config ([9a86287](https://github.com/globalso-labs/telemetry/commit/9a862877050bb5684bb82319e511686730fb7573))
+
 ## [1.9.0](https://github.com/globalso-labs/telemetry/compare/v2.0.0...v1.9.0) (2025-11-28)
 
 
