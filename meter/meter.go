@@ -70,7 +70,7 @@ func Initialize(ctx context.Context, telemetry *config.Telemetry) (*Meter, error
 	otel.SetMeterProvider(holder.provider)
 
 	// Run runtime collectors
-	if err := runtime.Start(); err != nil {
+	if err = runtime.Start(); err != nil {
 		_ = holder.Shutdown(ctx)
 		return nil, fmt.Errorf("failed to start runtime metrics: %w", err)
 	}

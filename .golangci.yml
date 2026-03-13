@@ -84,6 +84,7 @@ linters:
         - switch
         - map
     exhaustruct:
+      allow-empty: true
       exclude:
         - ^net/http.Client$
         - ^net/http.Cookie$
