@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/gin-gonic/gin v1.12.0
-	github.com/rs/zerolog v1.34.0
+	github.com/rs/zerolog v1.35.0
 	github.com/stretchr/testify v1.11.1
 	go.opentelemetry.io/contrib/detectors/azure/azurevm v0.14.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.67.0
@@ -60,7 +60,6 @@ require (
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/arch v0.25.0 // indirect
 	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/mod v0.34.0 // indirect
